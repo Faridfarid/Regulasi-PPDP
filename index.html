@@ -48,7 +48,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .stats-grid{display:flex;align-items:flex-start;justify-content:center;gap:0}
 .stat-item{flex:1;max-width:220px;padding:0 2rem;border-left:1px solid var(--border);text-align:center}
 .stat-item:first-child{border-left:none}
-.stat-num{font-size:48px;font-weight:400;font-family:var(--serif);line-height:1;color:var(--text);letter-spacing:-1px;display:block}
+.stat-num{font-size:48px;font-weight:400;font-family:var(--serif);line-height:1;color:var(--text);letter-spacing:-1px;display:block;white-space:nowrap}
 .stat-label{font-size:14px;font-weight:600;color:var(--text);margin-top:5px;display:block}
 .stat-sub{font-size:11.5px;color:var(--muted2);margin-top:2px;display:block}
 
@@ -205,7 +205,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
       <div class="stat-item">
         <span class="stat-num" id="s-halaman">—</span>
         <span class="stat-label">Halaman</span>
-        <span class="stat-sub">dari 3 kompilasi PDF</span>
+        <span class="stat-sub">dari kompilasi PDF OJK</span>
       </div>
       <div class="stat-item">
         <span class="stat-num" id="s-tahun">—</span>
@@ -484,7 +484,7 @@ function render(){
         ${reg.juga_berlaku_di?.length?'<span class="badge-cross">🔗 lintas bidang</span>':''}
       </div>
       <div class="card-title">${titleHL}</div>
-      <div class="card-info">Hal. ${reg.halaman_awal}–${reg.halaman_akhir} · Kompilasi ${SL[reg.sumber]||reg.sumber}</div>
+      <div class="card-info">${reg.jenis} ${reg.nomor}/${reg.tahun} · ${SL[reg.sumber]||reg.sumber}</div>
       ${isExp?`
       <div class="card-preview" onclick="event.stopPropagation()">
         ${pasal?`<div class="preview-pasal">
@@ -643,6 +643,14 @@ function highlight(text,q){
   return text;
 }
 
+// Fix encoding helper
+function fixEncoding(str){
+  try {
+    return decodeURIComponent(escape(str));
+  } catch(e) {
+    return str;
+  }
+}
 loadSlimIndex();
 </script>
 </body>
