@@ -6,11 +6,11 @@
 <title>Regulasi OJK PPDP</title>
 <script src="https://unpkg.com/lunr/lunr.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Lora:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap');
 
 :root{
-  --bg:#f2f0eb;--surface:#fff;--border:#e2dfd8;--border2:#ccc9c0;
-  --text:#1a1917;--muted:#6b6860;--muted2:#9c9a94;
+  --bg:#F9FAFB;--surface:#fff;--border:#E5E7EB;--border2:#D1D5DB;
+  --text:#111827;--muted:#6B7280;--muted2:#9CA3AF;
   --accent:#1e4d2b;--accent-hover:#163a20;--accent-bg:#e8f0ea;
   --pojk:#1a4f8a;--pojk-bg:#dce8f7;
   --seojk:#1a6b4a;--seojk-bg:#d4efe4;
@@ -18,39 +18,42 @@
   --asuransi:#4a1a6b;--asuransi-bg:#ecdff7;
   --penjaminan-c:#1a5a5a;--penjaminan-bg:#d4eeee;
   --dana:#5a1a1a;--dana-bg:#f7dada;
-  --highlight:#fff3b0;
+  --highlight:#FEF08A;
   --font:'Plus Jakarta Sans',sans-serif;
-  --serif:'Lora',Georgia,serif;
+  --serif:'Plus Jakarta Sans',sans-serif;
   --mono:'DM Mono',monospace;
   --radius:12px;
-  --shadow:0 1px 3px rgba(0,0,0,0.06);
-  --shadow-md:0 4px 16px rgba(0,0,0,0.08);
+  --shadow:0 1px 3px rgba(0,0,0,0.05);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.07);
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:14.5px;line-height:1.65;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 
 /* ── Header ── */
 header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem}
-.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:2rem;height:58px}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;height:62px}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);flex-shrink:0}
-.logo-icon{width:32px;height:32px;border:1.5px solid var(--text);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;font-family:var(--serif)}
+.logo-icon{width:32px;height:32px;border:1.5px solid var(--text);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;font-family:var(--font)}
 .logo-text{font-size:15px;font-weight:700;letter-spacing:-.3px}
 .logo-sub{font-size:11px;color:var(--muted);font-weight:400;margin-left:1px}
+.header-greeting{display:flex;flex-direction:column;gap:2px}
+.header-greeting-title{font-size:20px;font-weight:600;color:var(--text);line-height:1.25;letter-spacing:-.3px}
+.header-greeting-sub{font-size:12.5px;font-weight:400;color:var(--muted);line-height:1.4}
 .header-spacer{flex:1}
 .cutoff-pill{font-size:11px;font-weight:500;color:var(--accent);background:var(--accent-bg);border:1px solid rgba(30,77,43,.2);border-radius:20px;padding:3px 10px;flex-shrink:0}
 .loading-badge{font-size:11px;color:var(--muted);display:none}
 .loading-badge.show{display:inline}
 
 /* ── Hero stats ── */
-.hero{background:var(--surface);border-bottom:1px solid var(--border);padding:2.2rem 2rem 1.8rem}
+.hero{background:var(--surface);border-bottom:1px solid var(--border);padding:1.6rem 2rem 1.4rem}
 .hero-inner{max-width:1100px;margin:0 auto;text-align:center}
 .hero-eyebrow{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:1.6rem}
 .stats-grid{display:flex;align-items:flex-start;justify-content:center;gap:0}
 .stat-item{flex:1;max-width:220px;padding:0 2rem;border-left:1px solid var(--border);text-align:center}
 .stat-item:first-child{border-left:none}
-.stat-num{font-size:48px;font-weight:400;font-family:var(--serif);line-height:1;color:var(--text);letter-spacing:-1px;display:block;white-space:nowrap}
-.stat-label{font-size:14px;font-weight:600;color:var(--text);margin-top:5px;display:block}
-.stat-sub{font-size:11.5px;color:var(--muted2);margin-top:2px;display:block}
+.stat-num{font-size:44px;font-weight:600;font-family:var(--font);line-height:1;color:var(--text);letter-spacing:-1.5px;display:block;white-space:nowrap}
+.stat-label{font-size:13px;font-weight:600;color:var(--text);margin-top:6px;display:block;letter-spacing:-.1px}
+.stat-sub{font-size:11.5px;color:var(--muted2);margin-top:3px;display:block;font-weight:400;line-height:1.4}
 
 /* ── Search zone ── */
 .search-zone{background:var(--bg);padding:1.5rem 2rem 0}
@@ -58,7 +61,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .search-bar{display:flex;gap:0;background:var(--surface);border:1.5px solid var(--border2);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);transition:border-color .2s,box-shadow .2s}
 .search-bar:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,77,43,.1)}
 .search-icon-wrap{display:flex;align-items:center;padding:0 14px 0 16px;color:var(--muted2)}
-#searchInput{flex:1;border:none;outline:none;font-size:15px;font-family:var(--font);color:var(--text);padding:13px 0;background:transparent}
+#searchInput{flex:1;border:none;outline:none;font-size:14px;font-family:var(--font);font-weight:400;color:var(--text);padding:13px 0;background:transparent;line-height:1.5}
 #searchInput::placeholder{color:var(--muted2)}
 .btn-cari{background:var(--accent);color:white;border:none;padding:0 24px;font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;transition:background .15s;flex-shrink:0}
 .btn-cari:hover{background:var(--accent-hover)}
@@ -76,7 +79,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .main{max-width:1100px;margin:0 auto;padding:1.2rem 2rem 4rem}
 
 /* Results info */
-.results-info{font-size:13px;color:var(--muted);margin-bottom:1rem}
+.results-info{font-size:12.5px;color:var(--muted);margin-bottom:1rem;font-weight:400;line-height:1.5}
 .results-info strong{color:var(--text)}
 
 /* Search status */
@@ -105,11 +108,11 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .badge-cross{font-size:10.5px;color:var(--muted2);border:1px solid var(--border);border-radius:4px;padding:2px 7px}
 
 /* Card title */
-.card-title{font-size:16px;font-weight:600;line-height:1.4;color:var(--text);margin-bottom:4px}
+.card-title{font-size:14.5px;font-weight:600;line-height:1.5;color:var(--text);margin-bottom:4px;letter-spacing:-.1px}
 .card-title mark{background:var(--highlight);color:inherit;border-radius:2px;padding:0 2px}
 
 /* Card meta info */
-.card-info{font-size:12px;color:var(--muted2);margin-bottom:0}
+.card-info{font-size:12px;color:var(--muted2);margin-bottom:0;font-weight:400;line-height:1.5}
 
 /* Preview section */
 .card-preview{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
@@ -117,7 +120,7 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .preview-pasal-label{font-size:13px;font-weight:700;font-family:var(--mono);color:var(--text);letter-spacing:.5px}
 .btn-copy-pasal{font-size:11px;font-family:var(--font);padding:2px 8px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap;font-weight:500}
 .btn-copy-pasal:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
-.preview-text{font-size:13.5px;color:var(--muted);line-height:1.75;max-height:100px;overflow:hidden;position:relative}
+.preview-text{font-size:13px;color:var(--muted);line-height:1.7;max-height:100px;overflow:hidden;position:relative;font-weight:400}
 .preview-text.full{max-height:none}
 .preview-text mark{background:var(--highlight);color:var(--text);border-radius:2px;padding:0 2px}
 .preview-fade{position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(transparent,white);pointer-events:none}
@@ -149,7 +152,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
 .rekap-jenis{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:4px}
 .rekap-n{font-weight:600;font-family:var(--mono);font-size:13px}
 .rekap-total{display:flex;align-items:center;justify-content:space-between;margin-top:7px;padding-top:7px;border-top:1px solid var(--border);font-size:12px}
-.footer-note{font-size:11.5px;color:var(--muted2);line-height:1.7;border-top:1px solid var(--border);padding-top:1.2rem}
+.footer-note{font-size:11.5px;color:var(--muted2);line-height:1.7;border-top:1px solid var(--border);padding-top:1.2rem;font-weight:400}
 .footer-note strong{color:var(--muted)}
 
 /* Multi-pasal hits */
@@ -193,6 +196,10 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
         <span class="logo-sub"> · OJK</span>
       </div>
     </a>
+    <div class="header-greeting">
+      <span class="header-greeting-title">Selamat datang! 👋</span>
+      <span class="header-greeting-sub">Temukan dan jelajahi regulasi PPDP dengan mudah.</span>
+    </div>
     <div class="header-spacer"></div>
     <span class="loading-badge" id="loadingBadge">⟳ Memuat index...</span>
     <span class="cutoff-pill">Update Maret 2026</span>
@@ -202,7 +209,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
 <!-- Hero Stats -->
 <div class="hero">
   <div class="hero-inner">
-    <div class="hero-eyebrow">Kompilasi Regulasi Perasuransian, Penjaminan &amp; Dana Pensiun — OJK</div>
+
     <div class="stats-grid">
       <div class="stat-item">
         <span class="stat-num" id="s-regulasi">—</span>
