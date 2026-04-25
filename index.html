@@ -320,6 +320,8 @@ async function loadSlimIndex(){
     buildRekap(json.stats);
     buildStats(json.stats);
     render();
+    // Load semua full index di background supaya phrase filter langsung akurat
+    ['perasuransian','penjaminan','dana_pensiun'].forEach(s=>loadFullIndex(s));
   }catch(e){
     document.getElementById('resultsList').innerHTML=`<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Gagal memuat data</h3><p>Pastikan <code>search_index.json</code> ada di folder yang sama.</p><p style="margin-top:6px;font-size:11px;color:var(--muted2)">Error: ${e.message}</p></div>`;
     document.getElementById('resultsInfo').textContent='Error';
@@ -394,12 +396,19 @@ function getResults(){
     if(!usedFull&&lunrSlim)(lunrSearch(lunrSlim,q)||[]).forEach(x=>scoreMap[x.ref]=x.score);
     if(Object.keys(scoreMap).length>0) results=results.filter(r=>scoreMap[r.id]!==undefined);
     else results=[];
-    // Phrase filter: frasa harus muncul persis (bukan kata terpisah)
+    // Phrase filter: frasa harus muncul persis di teks penuh
     const phrase=q.trim().toLowerCase();
     if(phrase.length>=2){
       results=results.filter(r=>{
-        const hay=(r.judul+' '+(getFullTeks(r)||r.snippet||'')).toLowerCase();
-        return hay.includes(phrase);
+        const fullTeks=getFullTeks(r); // hanya ada jika full index sudah dimuat
+        if(fullTeks){
+          // Full index sudah ada — cek di teks lengkap
+          return (r.judul+' '+fullTeks).toLowerCase().includes(phrase);
+        } else {
+          // Full index belum dimuat — tandai sebagai "pending", tampilkan dulu
+          // tapi akan di-filter ulang setelah full index siap (lihat ensureFullLoaded)
+          return true;
+        }
       });
     }
   }
