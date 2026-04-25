@@ -156,6 +156,14 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
 .pasal-hit{padding:8px 0 4px}
 .pasal-hit-border{border-top:1px dashed var(--border);margin-top:10px;padding-top:12px}
 
+/* Pagination */
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:1.5rem;flex-wrap:wrap}
+.page-btn{font-size:13px;font-family:var(--font);font-weight:500;padding:6px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--text);cursor:pointer;transition:all .15s;min-width:36px;text-align:center}
+.page-btn:hover{border-color:var(--accent);color:var(--accent)}
+.page-btn.active{background:var(--accent);color:white;border-color:var(--accent)}
+.page-btn.disabled{opacity:.4;cursor:default;pointer-events:none}
+.page-info{font-size:12px;color:var(--muted);margin:0 4px}
+
 /* Toast */
 .toast{position:fixed;bottom:2rem;right:2rem;background:var(--accent);color:white;padding:9px 18px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 4px 14px rgba(0,0,0,0.15);transition:opacity .3s}
 
@@ -283,6 +291,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
   <div class="results-list" id="resultsList">
     <div class="loading"><div><div class="spinner"></div></div>Memuat index regulasi...</div>
   </div>
+  <div class="pagination" id="pagination"></div>
 </div>
 
 <!-- Footer -->
@@ -299,7 +308,8 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
 let slimData=[], fullData={}, loadedSumbers={}, loadingNow=false;
 let lunrSlim=null, lunrFull={};
 let query='', filterSumber='', filterJenis='', filterTahun='';
-let sortMode='tahun-desc', expandedId=null, expandedFull={};
+let sortMode='tahun-desc', expandedId=null, expandedFull={}, currentPage=1;
+const PAGE_SIZE=10;
 let searchTimer=null;
 
 const SL={perasuransian:'Perasuransian',penjaminan:'Penjaminan',dana_pensiun:'Dana Pensiun'};
@@ -531,7 +541,33 @@ function render(){
     return;
   }
 
-  list.innerHTML=results.map(reg=>{
+  // Pagination
+  const totalPages=Math.ceil(results.length/PAGE_SIZE);
+  if(currentPage>totalPages) currentPage=1;
+  const pageResults=results.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE);
+
+  // Render pagination
+  const pag=document.getElementById('pagination');
+  if(totalPages>1){
+    let pagHtml='';
+    pagHtml+=`<button class="page-btn${currentPage===1?' disabled':''}" onclick="goPage(${currentPage-1})">‹</button>`;
+    // Tampilkan max 7 tombol halaman
+    let startP=Math.max(1,currentPage-3);
+    let endP=Math.min(totalPages,startP+6);
+    if(endP-startP<6) startP=Math.max(1,endP-6);
+    if(startP>1) pagHtml+=`<button class="page-btn" onclick="goPage(1)">1</button>${startP>2?'<span class="page-info">...</span>':''}`;
+    for(let i=startP;i<=endP;i++){
+      pagHtml+=`<button class="page-btn${i===currentPage?' active':''}" onclick="goPage(${i})">${i}</button>`;
+    }
+    if(endP<totalPages) pagHtml+=`${endP<totalPages-1?'<span class="page-info">...</span>':''}<button class="page-btn" onclick="goPage(${totalPages})">${totalPages}</button>`;
+    pagHtml+=`<button class="page-btn${currentPage===totalPages?' disabled':''}" onclick="goPage(${currentPage+1})">›</button>`;
+    pagHtml+=`<span class="page-info">${(currentPage-1)*PAGE_SIZE+1}–${Math.min(currentPage*PAGE_SIZE,results.length)} dari ${results.length}</span>`;
+    pag.innerHTML=pagHtml;
+  } else {
+    pag.innerHTML='';
+  }
+
+  list.innerHTML=pageResults.map(reg=>{
     const isExp=expandedId===reg.id;
     const isFullLoaded=loadedSumbers[reg.sumber];
     const nomorRef=`${reg.jenis} No. ${reg.nomor} Tahun ${reg.tahun}`;
@@ -568,9 +604,11 @@ function render(){
       <div class="card-badges">
         <span class="badge-jenis badge-${reg.jenis}">${reg.jenis}</span>
         <span class="badge-nomor">${reg.nomor}/${reg.tahun}</span>
-        <span class="badge-sumber sumber-${reg.sumber}">${SL[reg.sumber]||reg.sumber}</span>
+        ${reg.juga_berlaku_di?.length
+          ? reg.juga_berlaku_di.map(b=>`<span class="badge-sumber sumber-${b.toLowerCase().replace(/ /g,'_')}">${b}</span>`).join('')
+          : `<span class="badge-sumber sumber-${reg.sumber}">${SL[reg.sumber]||reg.sumber}</span>`
+        }
         ${reg.jumlah_pasal>0?`<span class="badge-pasal">${reg.jumlah_pasal} pasal</span>`:''}
-        ${reg.juga_berlaku_di?.length?'<span class="badge-cross">🔗 lintas bidang</span>':''}
       </div>
       <div class="card-title">${titleHL}</div>
       <div class="card-info">${reg.jenis} ${reg.nomor}/${reg.tahun} · ${SL[reg.sumber]||reg.sumber}</div>
@@ -590,6 +628,14 @@ function render(){
       ${alsoIn}`:''}
     </div>`;
   }).join('');
+}
+
+function goPage(p){
+  currentPage=p;
+  expandedId=null;
+  render();
+  // Scroll ke atas hasil
+  document.getElementById('resultsList').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 function toggleCard(id){
@@ -694,7 +740,7 @@ function buildYearDropdown(){
 
 // ── Events ────────────────────────────────────────────────────────────────────
 document.getElementById('searchInput').addEventListener('input',e=>{
-  query=e.target.value; expandedId=null; clearTimeout(searchTimer);
+  query=e.target.value; expandedId=null; currentPage=1; clearTimeout(searchTimer);
   render();
   if(query.trim().length>=2){
     searchTimer=setTimeout(async()=>{await ensureFullLoaded();render();},400);
@@ -704,7 +750,7 @@ document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==
 
 function doSearch(){
   query=document.getElementById('searchInput').value;
-  expandedId=null; clearTimeout(searchTimer);
+  expandedId=null; currentPage=1; clearTimeout(searchTimer);
   render();
   if(query.trim().length>=2) ensureFullLoaded().then(()=>render());
 }
@@ -714,7 +760,7 @@ function handleDropdown(){
   filterTahun=document.getElementById('filterTahun').value;
   filterSumber=document.getElementById('filterSumber').value;
   sortMode=document.getElementById('sortSelect').value;
-  expandedId=null;
+  expandedId=null; currentPage=1;
   if(filterSumber&&query.trim().length>=2) loadFullIndex(filterSumber).then(()=>render());
   render();
 }
