@@ -482,6 +482,24 @@ function getAllPasalHits(reg, q){
     const firstPasal=hits[0]||null;
     return firstPasal?[firstPasal]:[];
   }
+
+  // Fallback: kalau tidak ada pasal terdeteksi (format SEOJK/tabel),
+  // cari snippet langsung di sekitar frasa
+  if(hits.length===0 && q && q.trim().length>=2){
+    const phrase=q.trim().toLowerCase();
+    const teksLow=teks.toLowerCase();
+    let idx=teksLow.indexOf(phrase);
+    const snippets=[];
+    while(idx!==-1 && snippets.length<5){
+      const s=Math.max(0,idx-100);
+      const e=Math.min(teks.length,idx+200);
+      const snippet=(s>0?'...':'')+teks.slice(s,e)+(e<teks.length?'...':'');
+      snippets.push({pasal:'', text:highlight(esc(snippet),q)});
+      idx=teksLow.indexOf(phrase,idx+phrase.length);
+    }
+    return snippets;
+  }
+
   return hits;
 }
 
