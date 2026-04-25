@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Regulasi OJK PPDP</title>
+<script src="https://unpkg.com/lunr/lunr.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&family=Lora:wght@400;500&display=swap');
+
+:root{
+  --bg:#f2f0eb;--surface:#fff;--border:#e2dfd8;--border2:#ccc9c0;
+  --text:#1a1917;--muted:#6b6860;--muted2:#9c9a94;
+  --accent:#1e4d2b;--accent-hover:#163a20;--accent-bg:#e8f0ea;
+  --pojk:#1a4f8a;--pojk-bg:#dce8f7;
+  --seojk:#1a6b4a;--seojk-bg:#d4efe4;
+  --padk:#7a3a00;--padk-bg:#fde8d0;
+  --asuransi:#4a1a6b;--asuransi-bg:#ecdff7;
+  --penjaminan-c:#1a5a5a;--penjaminan-bg:#d4eeee;
+  --dana:#5a1a1a;--dana-bg:#f7dada;
+  --highlight:#fff3b0;
+  --font:'Plus Jakarta Sans',sans-serif;
+  --serif:'Lora',Georgia,serif;
+  --mono:'DM Mono',monospace;
+  --radius:12px;
+  --shadow:0 1px 3px rgba(0,0,0,0.06);
+  --shadow-md:0 4px 16px rgba(0,0,0,0.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6}
+
+/* ── Header ── */
+header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:2rem;height:58px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);flex-shrink:0}
+.logo-icon{width:32px;height:32px;border:1.5px solid var(--text);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;font-family:var(--serif)}
+.logo-text{font-size:15px;font-weight:700;letter-spacing:-.3px}
+.logo-sub{font-size:11px;color:var(--muted);font-weight:400;margin-left:1px}
+.header-spacer{flex:1}
+.cutoff-pill{font-size:11px;font-weight:500;color:var(--accent);background:var(--accent-bg);border:1px solid rgba(30,77,43,.2);border-radius:20px;padding:3px 10px;flex-shrink:0}
+.loading-badge{font-size:11px;color:var(--muted);display:none}
+.loading-badge.show{display:inline}
+
+/* ── Hero stats ── */
+.hero{background:var(--surface);border-bottom:1px solid var(--border);padding:2.2rem 2rem 1.8rem}
+.hero-inner{max-width:1100px;margin:0 auto;text-align:center}
+.hero-eyebrow{font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--muted2);margin-bottom:1.6rem}
+.stats-grid{display:flex;align-items:flex-start;justify-content:center;gap:0}
+.stat-item{flex:1;max-width:220px;padding:0 2rem;border-left:1px solid var(--border);text-align:center}
+.stat-item:first-child{border-left:none}
+.stat-num{font-size:48px;font-weight:400;font-family:var(--serif);line-height:1;color:var(--text);letter-spacing:-1px;display:block}
+.stat-label{font-size:14px;font-weight:600;color:var(--text);margin-top:5px;display:block}
+.stat-sub{font-size:11.5px;color:var(--muted2);margin-top:2px;display:block}
+
+/* ── Search zone ── */
+.search-zone{background:var(--bg);padding:1.5rem 2rem 0}
+.search-inner{max-width:1100px;margin:0 auto}
+.search-bar{display:flex;gap:0;background:var(--surface);border:1.5px solid var(--border2);border-radius:10px;overflow:hidden;box-shadow:var(--shadow);transition:border-color .2s,box-shadow .2s}
+.search-bar:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px rgba(30,77,43,.1)}
+.search-icon-wrap{display:flex;align-items:center;padding:0 14px 0 16px;color:var(--muted2)}
+#searchInput{flex:1;border:none;outline:none;font-size:15px;font-family:var(--font);color:var(--text);padding:13px 0;background:transparent}
+#searchInput::placeholder{color:var(--muted2)}
+.btn-cari{background:var(--accent);color:white;border:none;padding:0 24px;font-size:14px;font-weight:600;font-family:var(--font);cursor:pointer;transition:background .15s;flex-shrink:0}
+.btn-cari:hover{background:var(--accent-hover)}
+
+/* Dropdowns */
+.filter-row{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.filter-select{font-size:13px;font-family:var(--font);color:var(--text);background:var(--surface);border:1.5px solid var(--border);border-radius:8px;padding:7px 32px 7px 12px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 20 20' fill='%236b6860'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:border-color .15s}
+.filter-select:focus{border-color:var(--accent)}
+.filter-spacer{flex:1}
+.sort-wrap{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.btn-export{font-size:12px;font-family:var(--font);padding:7px 12px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface);color:var(--muted);cursor:pointer;transition:all .15s;font-weight:500}
+.btn-export:hover{border-color:var(--accent);color:var(--accent)}
+
+/* ── Main layout ── */
+.main{max-width:1100px;margin:0 auto;padding:1.2rem 2rem 4rem}
+
+/* Results info */
+.results-info{font-size:13px;color:var(--muted);margin-bottom:1rem}
+.results-info strong{color:var(--text)}
+
+/* Search status */
+.search-status{display:none;align-items:center;gap:8px;padding:8px 14px;background:#fff;border:1px solid rgba(30,77,43,.15);border-radius:8px;margin-bottom:12px;font-size:12.5px;color:var(--accent)}
+.search-status.show{display:flex}
+.status-spinner{width:13px;height:13px;border:2px solid rgba(30,77,43,.15);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite;flex-shrink:0}
+
+/* ── Cards ── */
+.results-list{display:flex;flex-direction:column;gap:0}
+.reg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem 1.6rem;margin-bottom:10px;cursor:pointer;transition:border-color .15s,box-shadow .15s}
+.reg-card:hover{border-color:var(--border2);box-shadow:var(--shadow-md)}
+.reg-card.expanded{border-color:var(--accent)}
+
+/* Card badges row */
+.card-badges{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.badge-jenis{font-size:11px;font-weight:600;font-family:var(--mono);padding:3px 8px;border-radius:5px;border:1.5px solid;letter-spacing:.03em}
+.badge-POJK{color:var(--pojk);border-color:var(--pojk);background:var(--pojk-bg)}
+.badge-SEOJK{color:var(--seojk);border-color:var(--seojk);background:var(--seojk-bg)}
+.badge-PADK{color:var(--padk);border-color:var(--padk);background:var(--padk-bg)}
+.badge-nomor{font-size:12px;color:var(--muted);font-family:var(--mono)}
+.badge-sumber{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px}
+.sumber-perasuransian{background:var(--asuransi-bg);color:var(--asuransi)}
+.sumber-penjaminan{background:var(--penjaminan-bg);color:var(--penjaminan-c)}
+.sumber-dana_pensiun{background:var(--dana-bg);color:var(--dana)}
+.badge-pasal{font-size:11px;color:var(--muted2);font-family:var(--mono)}
+.badge-cross{font-size:10.5px;color:var(--muted2);border:1px solid var(--border);border-radius:4px;padding:2px 7px}
+
+/* Card title */
+.card-title{font-size:16px;font-weight:600;line-height:1.4;color:var(--text);margin-bottom:4px}
+.card-title mark{background:var(--highlight);color:inherit;border-radius:2px;padding:0 2px}
+
+/* Card meta info */
+.card-info{font-size:12px;color:var(--muted2);margin-bottom:0}
+
+/* Preview section */
+.card-preview{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+.preview-pasal{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.preview-pasal-label{font-size:13px;font-weight:700;font-family:var(--mono);color:var(--text);letter-spacing:.5px}
+.btn-copy-pasal{font-size:11px;font-family:var(--font);padding:2px 8px;border-radius:5px;border:1px solid var(--border2);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap;font-weight:500}
+.btn-copy-pasal:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.preview-text{font-size:13.5px;color:var(--muted);line-height:1.75;max-height:100px;overflow:hidden;position:relative}
+.preview-text.full{max-height:none}
+.preview-text mark{background:var(--highlight);color:var(--text);border-radius:2px;padding:0 2px}
+.preview-fade{position:absolute;bottom:0;left:0;right:0;height:36px;background:linear-gradient(transparent,white);pointer-events:none}
+.preview-text.full .preview-fade{display:none}
+.preview-actions{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap}
+.preview-source{font-size:11px;color:var(--muted2);flex:1;font-style:italic}
+.btn-action{font-size:12px;font-family:var(--font);padding:5px 12px;border-radius:7px;border:1.5px solid var(--border2);background:transparent;color:var(--text);cursor:pointer;font-weight:500;transition:all .15s;text-decoration:none;white-space:nowrap;display:inline-block}
+.btn-action:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-bg)}
+.btn-action.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.btn-action.primary:hover{background:var(--accent-hover)}
+.also-in{font-size:11px;color:var(--muted2);margin-top:6px}
+
+/* Empty / Loading */
+.empty-state{text-align:center;padding:4rem 2rem;color:var(--muted)}
+.empty-icon{font-size:32px;margin-bottom:1rem}
+.empty-state h3{font-size:16px;font-weight:600;color:var(--text);margin-bottom:.4rem}
+.loading{text-align:center;padding:3rem;color:var(--muted);font-size:13px}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Footer rekap ── */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem 2rem 2.5rem}
+.footer-inner{max-width:1100px;margin:0 auto}
+.footer-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted2);margin-bottom:1.2rem}
+.rekap-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:1.5rem}
+.rekap-card{background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:.9rem 1rem}
+.rekap-card-title{font-size:12px;font-weight:600;color:var(--text);margin-bottom:8px}
+.rekap-row{display:flex;align-items:center;justify-content:space-between;font-size:12px;margin-bottom:4px}
+.rekap-jenis{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:600;padding:2px 7px;border-radius:4px}
+.rekap-n{font-weight:600;font-family:var(--mono);font-size:13px}
+.rekap-total{display:flex;align-items:center;justify-content:space-between;margin-top:7px;padding-top:7px;border-top:1px solid var(--border);font-size:12px}
+.footer-note{font-size:11.5px;color:var(--muted2);line-height:1.7;border-top:1px solid var(--border);padding-top:1.2rem}
+.footer-note strong{color:var(--muted)}
+
+/* Toast */
+.toast{position:fixed;bottom:2rem;right:2rem;background:var(--accent);color:white;padding:9px 18px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 4px 14px rgba(0,0,0,0.15);transition:opacity .3s}
+
+@media(max-width:768px){
+  .header-inner{gap:1rem}
+  .hero{padding:1.5rem 1rem 1.2rem}
+  .stats-grid{gap:1rem;flex-wrap:wrap}
+  .stat-item{border-left:none;border-top:1px solid var(--border);padding:1rem 0 0;min-width:120px}
+  .stat-item:first-child{border-top:none;padding-top:0}
+  .stat-num{font-size:32px}
+  .search-zone{padding:1rem 1rem 0}
+  .main{padding:1rem 1rem 3rem}
+  .filter-row{gap:6px}
+  footer{padding:1.5rem 1rem 2rem}
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="#">
+      <div class="logo-icon">P</div>
+      <div>
+        <span class="logo-text">Regulasi PPDP</span>
+        <span class="logo-sub"> · OJK</span>
+      </div>
+    </a>
+    <div class="header-spacer"></div>
+    <span class="loading-badge" id="loadingBadge">⟳ Memuat index...</span>
+    <span class="cutoff-pill">Update Maret 2026</span>
+  </div>
+</header>
+
+<!-- Hero Stats -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="hero-eyebrow">Kompilasi Regulasi Perasuransian, Penjaminan &amp; Dana Pensiun — OJK</div>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-num" id="s-regulasi">—</span>
+        <span class="stat-label">Regulasi</span>
+        <span class="stat-sub">POJK · SEOJK · PADK</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" id="s-pasal">—</span>
+        <span class="stat-label">Pasal terstruktur</span>
+        <span class="stat-sub">bisa dicari &amp; dikutip</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" id="s-halaman">—</span>
+        <span class="stat-label">Halaman</span>
+        <span class="stat-sub">dari 3 kompilasi PDF</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num" id="s-tahun">—</span>
+        <span class="stat-label">Rentang tahun</span>
+        <span class="stat-sub">terindeks lengkap</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Search zone -->
+<div class="search-zone">
+  <div class="search-inner">
+    <div class="search-bar">
+      <div class="search-icon-wrap">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+        </svg>
+      </div>
+      <input type="text" id="searchInput" placeholder="Cari peraturan, pasal, atau topik..." autocomplete="off" spellcheck="false">
+      <button class="btn-cari" onclick="doSearch()">Cari</button>
+    </div>
+    <div class="filter-row">
+      <select class="filter-select" id="filterJenis" onchange="handleDropdown()">
+        <option value="">Semua Jenis</option>
+        <option value="POJK">POJK</option>
+        <option value="SEOJK">SEOJK</option>
+        <option value="PADK">PADK</option>
+      </select>
+      <select class="filter-select" id="filterTahun" onchange="handleDropdown()">
+        <option value="">Semua Tahun</option>
+        <option value="2025">2025</option>
+        <option value="2024">2024</option>
+        <option value="2023">2023</option>
+        <option value="2022">2022</option>
+        <option value="2021">2021</option>
+        <option value="2020">2020</option>
+        <option value="2019">2019</option>
+        <option value="2018">2018</option>
+        <option value="2017">2017</option>
+        <option value="2016">2016</option>
+        <option value="2015">2015</option>
+        <option value="2014">2014</option>
+        <option value="2013">2013</option>
+      </select>
+      <select class="filter-select" id="filterSumber" onchange="handleDropdown()">
+        <option value="">Semua Bidang</option>
+        <option value="perasuransian">Perasuransian</option>
+        <option value="penjaminan">Penjaminan</option>
+        <option value="dana_pensiun">Dana Pensiun</option>
+      </select>
+      <div class="filter-spacer"></div>
+      <select class="filter-select" id="sortSelect" onchange="handleDropdown()">
+        <option value="relevansi">Relevansi</option>
+        <option value="tahun-desc">Tahun terbaru</option>
+        <option value="tahun-asc">Tahun terlama</option>
+        <option value="nomor">Nomor</option>
+      </select>
+      <button class="btn-export" onclick="exportCSV()">↓ Export CSV</button>
+    </div>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+  <div class="search-status" id="searchStatus">
+    <div class="status-spinner"></div>
+    <span id="statusText">Memuat index teks penuh...</span>
+  </div>
+  <div class="results-info" id="resultsInfo">Memuat data...</div>
+  <div class="results-list" id="resultsList">
+    <div class="loading"><div><div class="spinner"></div></div>Memuat index regulasi...</div>
+  </div>
+</div>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-title">Rekapitulasi Regulasi Terindeks</div>
+    <div class="rekap-grid" id="rekapGrid"></div>
+    <div class="footer-note" id="footerNote"></div>
+  </div>
+</footer>
+
+<script>
+// ── State ──────────────────────────────────────────────────────────────────────
+let slimData=[], fullData={}, loadedSumbers={}, loadingNow=false;
+let lunrSlim=null, lunrFull={};
+let query='', filterSumber='', filterJenis='', filterTahun='';
+let sortMode='relevansi', expandedId=null, expandedFull={};
+let searchTimer=null;
+
+const SL={perasuransian:'Perasuransian',penjaminan:'Penjaminan',dana_pensiun:'Dana Pensiun'};
+const PF={
+  perasuransian:'E-Book_Kompilasi_Peraturan_Perasuransian_Edisi_Maret_2026.pdf',
+  penjaminan:'E-Book_Kompilasi_Peraturan_Penjaminan_Edisi_Maret_2026.pdf',
+  dana_pensiun:'E-Book_Kompilasi_Peraturan_Dana_Pensiun_Edisi_Maret_2026.pdf'
+};
+
+// ── Load ──────────────────────────────────────────────────────────────────────
+async function loadSlimIndex(){
+  try{
+    const res=await fetch('search_index.json');
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const json=await res.json();
+    slimData=json.regulasi;
+    buildLunr(slimData,'slim');
+    buildRekap(json.stats);
+    buildStats(json.stats);
+    render();
+  }catch(e){
+    document.getElementById('resultsList').innerHTML=`<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Gagal memuat data</h3><p>Pastikan <code>search_index.json</code> ada di folder yang sama.</p><p style="margin-top:6px;font-size:11px;color:var(--muted2)">Error: ${e.message}</p></div>`;
+    document.getElementById('resultsInfo').textContent='Error';
+  }
+}
+
+async function loadFullIndex(sumber){
+  if(loadedSumbers[sumber]||loadingNow) return;
+  loadingNow=true;
+  showStatus('Memuat index teks penuh — '+SL[sumber]+'...');
+  document.getElementById('loadingBadge').classList.add('show');
+  try{
+    const res=await fetch('index_'+sumber+'.json');
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const json=await res.json();
+    fullData[sumber]=json.regulasi;
+    buildLunr(json.regulasi,sumber);
+    loadedSumbers[sumber]=true;
+  }catch(e){console.warn('Full index failed:',sumber,e);}
+  finally{
+    loadingNow=false;
+    document.getElementById('loadingBadge').classList.remove('show');
+    hideStatus(); render();
+  }
+}
+
+async function ensureFullLoaded(){
+  const todo=filterSumber?[filterSumber]:['perasuransian','penjaminan','dana_pensiun'];
+  for(const s of todo){if(!loadedSumbers[s]) await loadFullIndex(s);}
+}
+
+// ── Lunr ──────────────────────────────────────────────────────────────────────
+function buildLunr(data,key){
+  const idx=lunr(function(){
+    this.field('judul',{boost:10});this.field('jenis',{boost:6});
+    this.field('nomor',{boost:6});this.field('tahun',{boost:3});
+    this.field('teks');this.ref('id');
+    this.pipeline.remove(lunr.stemmer);
+    this.searchPipeline.remove(lunr.stemmer);
+    data.forEach(r=>this.add({id:r.id,judul:r.judul,jenis:r.jenis,nomor:r.nomor,tahun:String(r.tahun),teks:r.teks||r.snippet||''}));
+  });
+  if(key==='slim') lunrSlim=idx; else lunrFull[key]=idx;
+}
+
+function lunrSearch(idx,q){
+  if(!idx||!q||q.trim().length<2) return null;
+  try{
+    const r=idx.search(q.trim()+' '+q.trim()+'*');
+    if(r.length>0) return r;
+    return idx.search(q.trim().split(/\s+/).filter(t=>t.length>=2).map(t=>t+'*').join(' '));
+  }catch(_){return[];}
+}
+
+// ── Results ───────────────────────────────────────────────────────────────────
+function getResults(){
+  const q=query.trim();
+  let results=slimData, scoreMap={};
+  if(q.length>=2){
+    const subs=filterSumber?[filterSumber]:['perasuransian','penjaminan','dana_pensiun'];
+    let usedFull=false;
+    for(const s of subs){
+      if(lunrFull[s]){(lunrSearch(lunrFull[s],q)||[]).forEach(x=>{scoreMap[x.ref]=Math.max(scoreMap[x.ref]||0,x.score);});usedFull=true;}
+    }
+    if(!usedFull&&lunrSlim)(lunrSearch(lunrSlim,q)||[]).forEach(x=>scoreMap[x.ref]=x.score);
+    if(Object.keys(scoreMap).length>0) results=results.filter(r=>scoreMap[r.id]!==undefined);
+    else results=[];
+  }
+  if(filterSumber) results=results.filter(r=>r.sumber===filterSumber);
+  if(filterJenis)  results=results.filter(r=>r.jenis===filterJenis);
+  if(filterTahun)  results=results.filter(r=>String(Number(r.tahun))===String(Number(filterTahun)));
+  if(sortMode==='relevansi'&&q.length>=2) results.sort((a,b)=>(scoreMap[b.id]||0)-(scoreMap[a.id]||0));
+  else if(sortMode==='tahun-desc') results.sort((a,b)=>b.tahun-a.tahun||+b.nomor-+a.nomor);
+  else if(sortMode==='tahun-asc')  results.sort((a,b)=>a.tahun-b.tahun||+a.nomor-+b.nomor);
+  else if(sortMode==='nomor')      results.sort((a,b)=>+a.nomor-+b.nomor);
+  else results.sort((a,b)=>b.tahun-a.tahun);
+  return results;
+}
+
+// ── Snippet ───────────────────────────────────────────────────────────────────
+function getFullTeks(reg){
+  return fullData[reg.sumber]?.find(r=>r.id===reg.id)?.teks||reg.snippet||'';
+}
+
+function getSnippet(reg,q){
+  const teks=getFullTeks(reg);
+  if(!teks) return {pasal:'',text:''};
+  // Deteksi pasal pertama di teks (tanpa lookahead)
+  function findFirstPasal(t){
+    const lines=t.split('\n');
+    for(let i=0;i<lines.length;i++){
+      if(/^Pasal\s+\d+\s*$/.test(lines[i].trim()) && i+1<lines.length){
+        return {pasal:lines[i].trim(), text:lines.slice(i+1).join(' ').trim().slice(0,300)+'...'};
+      }
+    }
+    return null;
+  }
+
+  if(!q||q.trim().length<2){
+    const fp=findFirstPasal(teks);
+    if(fp) return fp;
+    return {pasal:'', text:esc(teks.slice(0,300))+'...'};
+  }
+
+  const tokens=q.trim().split(/\s+/).filter(t=>t.length>=2);
+  let bestIdx=-1,bestScore=-1;
+  tokens.forEach(t=>{
+    const idx=teks.toLowerCase().indexOf(t.toLowerCase());
+    if(idx!==-1){
+      const score=tokens.filter(x=>teks.toLowerCase().indexOf(x.toLowerCase(),Math.max(0,idx-100))!==-1).length;
+      if(score>bestScore){bestScore=score;bestIdx=idx;}
+    }
+  });
+
+  // Deteksi pasal terdekat sebelum bestIdx — tanpa regex lookahead
+  let pasalLabel='';
+  const lines=teks.split('\n');
+  let charCount=0;
+  for(const line of lines){
+    if(charCount>bestIdx) break;
+    if(/^Pasal\s+\d+\s*$/.test(line.trim())) pasalLabel=line.trim();
+    charCount+=line.length+1;
+  }
+
+  if(bestIdx===-1) return {pasal:pasalLabel, text:highlight(esc(teks.slice(0,300))+'...',q)};
+  const s=Math.max(0,bestIdx-120), e=Math.min(teks.length,bestIdx+340);
+  return {pasal:pasalLabel, text:highlight(esc((s>0?'...':'')+teks.slice(s,e)+(e<teks.length?'...':'')),q)};
+}
+
+// ── Render ────────────────────────────────────────────────────────────────────
+function render(){
+  const results=getResults();
+  const list=document.getElementById('resultsList');
+  const infoEl=document.getElementById('resultsInfo');
+  const q=query.trim();
+  const allLoaded=(filterSumber?[filterSumber]:['perasuransian','penjaminan','dana_pensiun']).every(s=>loadedSumbers[s]);
+
+  if(q.length>=2){
+    const note=allLoaded?'':' · <span style="color:var(--muted2)">memuat index lengkap...</span>';
+    infoEl.innerHTML=`Menampilkan <strong>${results.length}</strong> hasil untuk &ldquo;<strong>${esc(q)}</strong>&rdquo;${note}`;
+  } else if(filterSumber||filterJenis||filterTahun){
+    infoEl.innerHTML=`Menampilkan <strong>${results.length}</strong> regulasi`;
+  } else {
+    infoEl.innerHTML=`<strong>${slimData.length}</strong> regulasi tersedia`;
+  }
+
+  if(results.length===0){
+    list.innerHTML=`<div class="empty-state"><div class="empty-icon">🔍</div><h3>Tidak ditemukan</h3><p>Coba kata kunci lain atau ubah filter.</p></div>`;
+    return;
+  }
+
+  list.innerHTML=results.map(reg=>{
+    const isExp=expandedId===reg.id;
+    const isFull=expandedFull[reg.id];
+    const nomorRef=`${reg.jenis} No. ${reg.nomor} Tahun ${reg.tahun}`;
+    const titleHL=highlight(esc(reg.judul),q);
+    const {pasal,text:snippetText}=getSnippet(reg,q);
+    const alsoIn=reg.juga_berlaku_di?.length?`<div class="also-in">Juga berlaku di: ${reg.juga_berlaku_di.join(', ')}</div>`:'';
+    const isFullLoaded=loadedSumbers[reg.sumber];
+
+    return `<div class="reg-card${isExp?' expanded':''}" data-id="${reg.id}" onclick="toggleCard('${reg.id}')">
+      <div class="card-badges">
+        <span class="badge-jenis badge-${reg.jenis}">${reg.jenis}</span>
+        <span class="badge-nomor">${reg.nomor}/${reg.tahun}</span>
+        <span class="badge-sumber sumber-${reg.sumber}">${SL[reg.sumber]||reg.sumber}</span>
+        ${reg.jumlah_pasal>0?`<span class="badge-pasal">${reg.jumlah_pasal} pasal</span>`:''}
+        ${reg.juga_berlaku_di?.length?'<span class="badge-cross">🔗 lintas bidang</span>':''}
+      </div>
+      <div class="card-title">${titleHL}</div>
+      <div class="card-info">Hal. ${reg.halaman_awal}–${reg.halaman_akhir} · Kompilasi ${SL[reg.sumber]||reg.sumber}</div>
+      ${isExp?`
+      <div class="card-preview" onclick="event.stopPropagation()">
+        ${pasal?`<div class="preview-pasal">
+          <span class="preview-pasal-label">${esc(pasal)}</span>
+          <button class="btn-copy-pasal" onclick="event.stopPropagation();copyPasal('${reg.id}','${esc(pasal)}','${esc(nomorRef)}')">📋 Salin pasal ini</button>
+        </div>`:''}
+        <div class="preview-text${isFull?' full':''}" id="pt-${reg.id}">
+          ${snippetText||'<span style="color:var(--muted2);font-size:12px">Belum tersedia.</span>'}
+          ${!isFull&&snippetText?'<div class="preview-fade"></div>':''}
+        </div>
+        <div class="preview-actions">
+          <span class="preview-source">${isFullLoaded?'Teks penuh terindeks':'Ringkasan — index sedang dimuat'}</span>
+          ${snippetText?`<button class="btn-action" onclick="toggleFull('${reg.id}')">${isFull?'Ringkas':'Selengkapnya'}</button>`:''}
+          <button class="btn-action" onclick="copySnippet('${reg.id}')">Salin teks</button>
+          <button class="btn-action" onclick="copyRef('${esc(nomorRef)}')">Salin referensi</button>
+          <a class="btn-action primary" href="${PF[reg.sumber]}#page=${reg.halaman_awal}" target="_blank" onclick="event.stopPropagation()">Buka PDF ↗</a>
+        </div>
+      </div>
+      ${alsoIn}`:''}
+    </div>`;
+  }).join('');
+}
+
+function toggleCard(id){
+  if(expandedId===id){expandedId=null;}
+  else{
+    expandedId=id;
+    const reg=slimData.find(r=>r.id===id);
+    if(reg&&!loadedSumbers[reg.sumber]) loadFullIndex(reg.sumber).then(()=>render());
+  }
+  render();
+}
+function toggleFull(id){expandedFull[id]=!expandedFull[id];render();}
+
+// ── Copy & export ─────────────────────────────────────────────────────────────
+function copyRef(text){navigator.clipboard.writeText(text).then(()=>toast('Disalin: '+text));}
+
+function copyPasal(id, pasal, nomorRef){
+  const reg=slimData.find(r=>r.id===id);
+  if(!reg) return;
+  const teks=getFullTeks(reg);
+  // Ambil teks mulai dari pasal yang dimaksud sampai pasal berikutnya
+  const lines=teks.split('\n');
+  let capturing=false, result=[], pasalFound=false;
+  for(const line of lines){
+    const trimmed=line.trim();
+    if(trimmed===pasal){capturing=true;pasalFound=true;result=[pasal];continue;}
+    if(capturing){
+      // Stop kalau ketemu pasal berikutnya
+      if(/^Pasal\s+\d+\s*$/.test(trimmed)&&result.length>2) break;
+      if(trimmed) result.push(trimmed);
+    }
+  }
+  const pasalTeks=pasalFound
+    ?`${nomorRef}\n\n${result.join('\n')}`
+    :`${nomorRef}\n\n${pasal}`;
+  navigator.clipboard.writeText(pasalTeks).then(()=>toast('Pasal disalin!'));
+}
+function copySnippet(id){
+  const reg=slimData.find(r=>r.id===id);
+  if(!reg) return;
+  const teks=getFullTeks(reg).slice(0,1000);
+  navigator.clipboard.writeText(teks).then(()=>toast('Teks disalin!'));
+}
+function exportCSV(){
+  const results=getResults();
+  const rows=[['Jenis','Nomor','Tahun','Judul','Bidang','Hal. Awal','Hal. Akhir','Jumlah Pasal','Lintas Bidang']];
+  results.forEach(r=>rows.push([r.jenis,r.nomor,r.tahun,`"${r.judul.replace(/"/g,'""')}"`,SL[r.sumber]||r.sumber,r.halaman_awal,r.halaman_akhir,r.jumlah_pasal||0,r.juga_berlaku_di?.join('; ')||'']));
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\ufeff'+rows.map(r=>r.join(',')).join('\n')],{type:'text/csv;charset=utf-8'}));
+  a.download=`regulasi-ojk-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click(); toast('Export '+results.length+' regulasi selesai');
+}
+function toast(msg){const t=document.createElement('div');t.className='toast';t.textContent=msg;document.body.appendChild(t);setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),300);},2200);}
+
+// ── Status ────────────────────────────────────────────────────────────────────
+function showStatus(msg){document.getElementById('statusText').textContent=msg;document.getElementById('searchStatus').classList.add('show');}
+function hideStatus(){document.getElementById('searchStatus').classList.remove('show');}
+
+// ── Stats ─────────────────────────────────────────────────────────────────────
+function buildStats(stats){
+  if(!stats?.global) return;
+  const g=stats.global;
+  document.getElementById('s-regulasi').textContent=g.total_regulasi_unik?.toLocaleString('id')||'—';
+  document.getElementById('s-pasal').textContent=(g.total_pasal||0).toLocaleString('id');
+  document.getElementById('s-halaman').textContent=(g.total_halaman||0).toLocaleString('id');
+  const d=g.rentang_tahun?.dari,s=g.rentang_tahun?.sampai;
+  document.getElementById('s-tahun').textContent=d&&s?d+'–'+s:'—';
+}
+
+// ── Rekap footer ──────────────────────────────────────────────────────────────
+function buildRekap(stats){
+  if(!stats) return;
+  const sumbers=[{key:'perasuransian',label:'Perasuransian'},{key:'penjaminan',label:'Penjaminan'},{key:'dana_pensiun',label:'Dana Pensiun'}];
+  const jenis=['POJK','SEOJK','PADK'];
+  const cards=sumbers.map(s=>{
+    const b=stats.per_bidang?.[s.key];if(!b) return '';
+    const rows=jenis.map(j=>{const n=b.per_jenis?.[j]||0;return n===0?'':`<div class="rekap-row"><span class="rekap-jenis badge-${j}">${j}</span><span class="rekap-n">${n}</span></div>`;}).join('');
+    return `<div class="rekap-card"><div class="rekap-card-title">${s.label}</div>${rows}<div class="rekap-total"><span style="color:var(--muted)">${b.total_regulasi} reg · ${(b.total_pasal||0).toLocaleString('id')} pasal</span><span class="rekap-n">${(b.total_halaman||0).toLocaleString('id')} hal</span></div></div>`;
+  });
+  const g=stats.global;
+  const totalRows=jenis.map(j=>{const n=g?.per_jenis?.[j]||0;return n===0?'':`<div class="rekap-row"><span class="rekap-jenis badge-${j}">${j}</span><span class="rekap-n">${n}</span></div>`;}).join('');
+  cards.push(`<div class="rekap-card" style="border-color:var(--accent);background:var(--accent-bg)"><div class="rekap-card-title" style="color:var(--accent)">Semua Bidang</div>${totalRows}<div class="rekap-total"><span style="color:var(--muted)">${g?.total_regulasi_unik} reg · ${(g?.total_pasal||0).toLocaleString('id')} pasal</span><span class="rekap-n" style="color:var(--accent)">${(g?.total_halaman||0).toLocaleString('id')} hal</span></div></div>`);
+  document.getElementById('rekapGrid').innerHTML=cards.join('');
+  const cross=g?.lintas_sektor||0;
+  document.getElementById('footerNote').innerHTML=`<strong>Catatan:</strong> Data diindeks dari 3 kompilasi PDF OJK edisi <strong>Maret 2026</strong> yang diterbitkan oleh Departemen Pengaturan dan Pengembangan Perasuransian, Penjaminan, dan Dana Pensiun (PPDP). Total <strong>${g?.total_regulasi_unik} regulasi unik</strong> dengan <strong>${(g?.total_pasal||0).toLocaleString('id')} pasal</strong> — ${cross} di antaranya berlaku lintas bidang. Peraturan yang diterbitkan setelah Maret 2026 belum terindeks.`;
+}
+
+// ── Dropdown year ─────────────────────────────────────────────────────────────
+function buildYearDropdown(){
+  const years=[...new Set(slimData.map(r=>Number(r.tahun)))].sort((a,b)=>b-a);
+  const sel=document.getElementById('filterTahun');
+  // Hapus semua option kecuali yang pertama (Semua Tahun)
+  while(sel.options.length>1) sel.remove(1);
+  years.forEach(y=>{
+    const o=document.createElement('option');
+    o.value=String(y);
+    o.textContent=y;
+    sel.appendChild(o);
+  });
+  console.log('Tahun tersedia:', years);
+}
+
+// ── Events ────────────────────────────────────────────────────────────────────
+document.getElementById('searchInput').addEventListener('input',e=>{
+  query=e.target.value; expandedId=null; clearTimeout(searchTimer);
+  render();
+  if(query.trim().length>=2){
+    searchTimer=setTimeout(async()=>{await ensureFullLoaded();render();},400);
+  }
+});
+document.getElementById('searchInput').addEventListener('keydown',e=>{if(e.key==='Enter') doSearch();});
+
+function doSearch(){
+  query=document.getElementById('searchInput').value;
+  expandedId=null; clearTimeout(searchTimer);
+  render();
+  if(query.trim().length>=2) ensureFullLoaded().then(()=>render());
+}
+
+function handleDropdown(){
+  filterJenis=document.getElementById('filterJenis').value;
+  filterTahun=document.getElementById('filterTahun').value;
+  filterSumber=document.getElementById('filterSumber').value;
+  sortMode=document.getElementById('sortSelect').value;
+  expandedId=null;
+  if(filterSumber&&query.trim().length>=2) loadFullIndex(filterSumber).then(()=>render());
+  render();
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function highlight(text,q){
+  if(!q||q.trim().length<2) return text;
+  q.trim().split(/\s+/).filter(t=>t.length>=2).forEach(t=>{const e=t.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');text=text.replace(new RegExp('('+e+')','gi'),'<mark>$1</mark>');});
+  return text;
+}
+
+loadSlimIndex();
+</script>
+</body>
+</html>
