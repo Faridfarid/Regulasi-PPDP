@@ -299,11 +299,11 @@ let sortMode='relevansi', expandedId=null, expandedFull={};
 let searchTimer=null;
 
 const SL={perasuransian:'Perasuransian',penjaminan:'Penjaminan',dana_pensiun:'Dana Pensiun'};
-const PF={
-  perasuransian:'E-Book_Kompilasi_Peraturan_Perasuransian_Edisi_Maret_2026.pdf',
-  penjaminan:'E-Book_Kompilasi_Peraturan_Penjaminan_Edisi_Maret_2026.pdf',
-  dana_pensiun:'E-Book_Kompilasi_Peraturan_Dana_Pensiun_Edisi_Maret_2026.pdf'
-};
+const RELEASE_URL='https://github.com/Faridfarid/Regulasi-PPDP/releases/download/v2026.03/';
+// PDF per regulasi — langsung buka file yang tepat
+function getPdfUrl(reg){
+  return RELEASE_URL + reg.pdf_file;
+}
 
 // ── Load ──────────────────────────────────────────────────────────────────────
 async function loadSlimIndex(){
