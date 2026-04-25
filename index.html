@@ -152,6 +152,10 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
 .footer-note{font-size:11.5px;color:var(--muted2);line-height:1.7;border-top:1px solid var(--border);padding-top:1.2rem}
 .footer-note strong{color:var(--muted)}
 
+/* Multi-pasal hits */
+.pasal-hit{padding:8px 0 4px}
+.pasal-hit-border{border-top:1px dashed var(--border);margin-top:10px;padding-top:12px}
+
 /* Toast */
 .toast{position:fixed;bottom:2rem;right:2rem;background:var(--accent);color:white;padding:9px 18px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 4px 14px rgba(0,0,0,0.15);transition:opacity .3s}
 
@@ -259,8 +263,8 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
       </select>
       <div class="filter-spacer"></div>
       <select class="filter-select" id="sortSelect" onchange="handleDropdown()">
+        <option value="tahun-desc" selected>Tahun terbaru</option>
         <option value="relevansi">Relevansi</option>
-        <option value="tahun-desc">Tahun terbaru</option>
         <option value="tahun-asc">Tahun terlama</option>
         <option value="nomor">Nomor</option>
       </select>
@@ -295,7 +299,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
 let slimData=[], fullData={}, loadedSumbers={}, loadingNow=false;
 let lunrSlim=null, lunrFull={};
 let query='', filterSumber='', filterJenis='', filterTahun='';
-let sortMode='relevansi', expandedId=null, expandedFull={};
+let sortMode='tahun-desc', expandedId=null, expandedFull={};
 let searchTimer=null;
 
 const SL={perasuransian:'Perasuransian',penjaminan:'Penjaminan',dana_pensiun:'Dana Pensiun'};
@@ -362,10 +366,19 @@ function buildLunr(data,key){
 
 function lunrSearch(idx,q){
   if(!idx||!q||q.trim().length<2) return null;
+  const tokens=q.trim().split(/\s+/).filter(t=>t.length>=2);
+  if(tokens.length===0) return [];
   try{
-    const r=idx.search(q.trim()+' '+q.trim()+'*');
+    // AND search: semua kata harus ada (pakai +)
+    const andQuery=tokens.map(t=>'+'+t+' +'+t+'*').join(' ');
+    const r=idx.search(andQuery);
     if(r.length>0) return r;
-    return idx.search(q.trim().split(/\s+/).filter(t=>t.length>=2).map(t=>t+'*').join(' '));
+    // Fallback: coba tanpa wildcard tapi tetap AND
+    const andStrict=tokens.map(t=>'+'+t).join(' ');
+    const r2=idx.search(andStrict);
+    if(r2.length>0) return r2;
+    // Fallback terakhir: OR search jika AND tidak ada hasil
+    return idx.search(tokens.map(t=>t+'*').join(' '));
   }catch(_){return[];}
 }
 
@@ -386,62 +399,80 @@ function getResults(){
   if(filterSumber) results=results.filter(r=>r.sumber===filterSumber);
   if(filterJenis)  results=results.filter(r=>r.jenis===filterJenis);
   if(filterTahun)  results=results.filter(r=>String(Number(r.tahun))===String(Number(filterTahun)));
-  if(sortMode==='relevansi'&&q.length>=2) results.sort((a,b)=>(scoreMap[b.id]||0)-(scoreMap[a.id]||0));
+  if(sortMode==='relevansi'&&q.length>=2){
+    // Relevansi + tie-break tahun terbaru
+    results.sort((a,b)=>{
+      const sd=(scoreMap[b.id]||0)-(scoreMap[a.id]||0);
+      if(sd!==0) return sd;
+      return b.tahun-a.tahun||+b.nomor-+a.nomor;
+    });
+  }
   else if(sortMode==='tahun-desc') results.sort((a,b)=>b.tahun-a.tahun||+b.nomor-+a.nomor);
   else if(sortMode==='tahun-asc')  results.sort((a,b)=>a.tahun-b.tahun||+a.nomor-+b.nomor);
   else if(sortMode==='nomor')      results.sort((a,b)=>+a.nomor-+b.nomor);
-  else results.sort((a,b)=>b.tahun-a.tahun);
+  else results.sort((a,b)=>b.tahun-a.tahun||+b.nomor-+a.nomor);
   return results;
 }
 
 // ── Snippet ───────────────────────────────────────────────────────────────────
 function getFullTeks(reg){
-  return fullData[reg.sumber]?.find(r=>r.id===reg.id)?.teks||reg.snippet||'';
+  return fullData[reg.sumber]?.find(r=>r.id===reg.id)?.teks||'';
+}
+
+// Ambil semua pasal yang mengandung semua token query
+function getAllPasalHits(reg, q){
+  const teks=getFullTeks(reg);
+  if(!teks) return [];
+  const tokens=q?q.trim().split(/\s+/).filter(t=>t.length>=2):[];
+  const lines=teks.split('\n');
+  const hits=[];
+  let currentPasal=null, currentLines=[];
+
+  function flushPasal(){
+    if(!currentPasal||currentLines.length===0) return;
+    const combined=currentLines.join(' ');
+    const combinedLow=combined.toLowerCase();
+    const match=tokens.length===0||tokens.every(t=>combinedLow.includes(t.toLowerCase()));
+    if(match){
+      // Cari posisi highlight terbaik
+      let bestIdx=-1;
+      if(tokens.length>0){
+        tokens.forEach(t=>{
+          const idx=combinedLow.indexOf(t.toLowerCase());
+          if(idx!==-1&&(bestIdx===-1||idx<bestIdx)) bestIdx=idx;
+        });
+      }
+      const s=bestIdx===-1?0:Math.max(0,bestIdx-80);
+      const e=Math.min(combined.length,s+350);
+      const snippet=(s>0?'...':'')+combined.slice(s,e)+(e<combined.length?'...':'');
+      hits.push({pasal:currentPasal, text:highlight(esc(snippet),q)});
+    }
+    currentLines=[];
+  }
+
+  for(const line of lines){
+    const stripped=line.trim();
+    if(/^Pasal\s+\d+\s*$/.test(stripped)){
+      flushPasal();
+      currentPasal=stripped;
+    } else if(currentPasal&&stripped){
+      currentLines.push(stripped);
+    }
+  }
+  flushPasal();
+
+  // Jika tidak ada query, ambil pasal pertama saja
+  if(tokens.length===0){
+    const firstPasal=hits[0]||null;
+    return firstPasal?[firstPasal]:[];
+  }
+  return hits;
 }
 
 function getSnippet(reg,q){
-  const teks=getFullTeks(reg);
-  if(!teks) return {pasal:'',text:''};
-  // Deteksi pasal pertama di teks (tanpa lookahead)
-  function findFirstPasal(t){
-    const lines=t.split('\n');
-    for(let i=0;i<lines.length;i++){
-      if(/^Pasal\s+\d+\s*$/.test(lines[i].trim()) && i+1<lines.length){
-        return {pasal:lines[i].trim(), text:lines.slice(i+1).join(' ').trim().slice(0,300)+'...'};
-      }
-    }
-    return null;
-  }
-
-  if(!q||q.trim().length<2){
-    const fp=findFirstPasal(teks);
-    if(fp) return fp;
-    return {pasal:'', text:esc(teks.slice(0,300))+'...'};
-  }
-
-  const tokens=q.trim().split(/\s+/).filter(t=>t.length>=2);
-  let bestIdx=-1,bestScore=-1;
-  tokens.forEach(t=>{
-    const idx=teks.toLowerCase().indexOf(t.toLowerCase());
-    if(idx!==-1){
-      const score=tokens.filter(x=>teks.toLowerCase().indexOf(x.toLowerCase(),Math.max(0,idx-100))!==-1).length;
-      if(score>bestScore){bestScore=score;bestIdx=idx;}
-    }
-  });
-
-  // Deteksi pasal terdekat sebelum bestIdx — tanpa regex lookahead
-  let pasalLabel='';
-  const lines=teks.split('\n');
-  let charCount=0;
-  for(const line of lines){
-    if(charCount>bestIdx) break;
-    if(/^Pasal\s+\d+\s*$/.test(line.trim())) pasalLabel=line.trim();
-    charCount+=line.length+1;
-  }
-
-  if(bestIdx===-1) return {pasal:pasalLabel, text:highlight(esc(teks.slice(0,300))+'...',q)};
-  const s=Math.max(0,bestIdx-120), e=Math.min(teks.length,bestIdx+340);
-  return {pasal:pasalLabel, text:highlight(esc((s>0?'...':'')+teks.slice(s,e)+(e<teks.length?'...':'')),q)};
+  const hits=getAllPasalHits(reg,q);
+  if(hits.length>0) return hits[0];
+  return {pasal:'',text:''};
 }
 
 // ── Render ────────────────────────────────────────────────────────────────────
@@ -468,12 +499,36 @@ function render(){
 
   list.innerHTML=results.map(reg=>{
     const isExp=expandedId===reg.id;
-    const isFull=expandedFull[reg.id];
+    const isFullLoaded=loadedSumbers[reg.sumber];
     const nomorRef=`${reg.jenis} No. ${reg.nomor} Tahun ${reg.tahun}`;
     const titleHL=highlight(esc(reg.judul),q);
-    const {pasal,text:snippetText}=getSnippet(reg,q);
+    const pasalHits=isFullLoaded?getAllPasalHits(reg,q):[];
     const alsoIn=reg.juga_berlaku_di?.length?`<div class="also-in">Juga berlaku di: ${reg.juga_berlaku_di.join(', ')}</div>`:'';
-    const isFullLoaded=loadedSumbers[reg.sumber];
+
+    // Render pasal hits sebagai string terpisah (hindari IIFE dalam template literal)
+    let pasalHitsHtml='';
+    if(isFullLoaded){
+      if(pasalHits.length>0){
+        const maxHits=10;
+        const shown=pasalHits.slice(0,maxHits);
+        const extra=pasalHits.length-maxHits;
+        pasalHitsHtml=shown.map((hit,i)=>`
+          <div class="pasal-hit${i>0?' pasal-hit-border':''}">
+            <div class="preview-pasal">
+              <span class="preview-pasal-label">${esc(hit.pasal)}</span>
+              <button class="btn-copy-pasal" onclick="event.stopPropagation();copyPasal('${reg.id}','${esc(hit.pasal)}','${esc(nomorRef)}')">📋 Salin pasal ini</button>
+            </div>
+            <div class="preview-text full">${hit.text}</div>
+          </div>`).join('');
+        if(extra>0) pasalHitsHtml+=`<div style="font-size:12px;color:var(--muted2);padding:8px 0">... dan ${extra} pasal lainnya</div>`;
+      } else {
+        pasalHitsHtml='<span style="color:var(--muted2);font-size:12px">Teks tidak tersedia.</span>';
+      }
+    }
+
+    const pasalCountLabel=pasalHits.length>1
+      ?`<strong>${pasalHits.length} pasal</strong> mengandung kata kunci`
+      :'Teks penuh terindeks';
 
     return `<div class="reg-card${isExp?' expanded':''}" data-id="${reg.id}" onclick="toggleCard('${reg.id}')">
       <div class="card-badges">
@@ -487,26 +542,16 @@ function render(){
       <div class="card-info">${reg.jenis} ${reg.nomor}/${reg.tahun} · ${SL[reg.sumber]||reg.sumber}</div>
       ${isExp?`
       <div class="card-preview" onclick="event.stopPropagation()">
-        ${!isFullLoaded?`
-        <div style="display:flex;align-items:center;gap:8px;padding:12px 0;color:var(--muted);font-size:13px">
-          <div class="status-spinner"></div>
-          <span>Memuat teks pasal...</span>
-        </div>`:`
-        ${pasal?`<div class="preview-pasal">
-          <span class="preview-pasal-label">${esc(pasal)}</span>
-          <button class="btn-copy-pasal" onclick="event.stopPropagation();copyPasal('${reg.id}','${esc(pasal)}','${esc(nomorRef)}')">📋 Salin pasal ini</button>
-        </div>`:''}
-        <div class="preview-text${isFull?' full':''}" id="pt-${reg.id}">
-          ${snippetText||'<span style="color:var(--muted2);font-size:12px">Teks tidak tersedia.</span>'}
-          ${!isFull&&snippetText?'<div class="preview-fade"></div>':''}
-        </div>
-        <div class="preview-actions">
-          <span class="preview-source">Teks penuh terindeks</span>
-          ${snippetText?`<button class="btn-action" onclick="toggleFull('${reg.id}')">${isFull?'Ringkas':'Selengkapnya'}</button>`:''}
+        ${!isFullLoaded
+          ?`<div style="display:flex;align-items:center;gap:8px;padding:12px 0;color:var(--muted);font-size:13px"><div class="status-spinner"></div><span>Memuat teks pasal...</span></div>`
+          :pasalHitsHtml
+        }
+        <div class="preview-actions" style="margin-top:12px">
+          <span class="preview-source">${pasalCountLabel}</span>
           <button class="btn-action" onclick="copySnippet('${reg.id}')">Salin teks</button>
           <button class="btn-action" onclick="copyRef('${esc(nomorRef)}')">Salin referensi</button>
           <a class="btn-action primary" href="${getPdfUrl(reg)}#page=${reg.halaman_awal}" target="_blank" onclick="event.stopPropagation()">Buka PDF ↗</a>
-        </div>`}
+        </div>
       </div>
       ${alsoIn}`:''}
     </div>`;
