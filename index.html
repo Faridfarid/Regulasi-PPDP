@@ -487,21 +487,26 @@ function render(){
       <div class="card-info">${reg.jenis} ${reg.nomor}/${reg.tahun} · ${SL[reg.sumber]||reg.sumber}</div>
       ${isExp?`
       <div class="card-preview" onclick="event.stopPropagation()">
+        ${!isFullLoaded?`
+        <div style="display:flex;align-items:center;gap:8px;padding:12px 0;color:var(--muted);font-size:13px">
+          <div class="status-spinner"></div>
+          <span>Memuat teks pasal...</span>
+        </div>`:`
         ${pasal?`<div class="preview-pasal">
           <span class="preview-pasal-label">${esc(pasal)}</span>
           <button class="btn-copy-pasal" onclick="event.stopPropagation();copyPasal('${reg.id}','${esc(pasal)}','${esc(nomorRef)}')">📋 Salin pasal ini</button>
         </div>`:''}
         <div class="preview-text${isFull?' full':''}" id="pt-${reg.id}">
-          ${snippetText||'<span style="color:var(--muted2);font-size:12px">Belum tersedia.</span>'}
+          ${snippetText||'<span style="color:var(--muted2);font-size:12px">Teks tidak tersedia.</span>'}
           ${!isFull&&snippetText?'<div class="preview-fade"></div>':''}
         </div>
         <div class="preview-actions">
-          <span class="preview-source">${isFullLoaded?'Teks penuh terindeks':'Ringkasan — index sedang dimuat'}</span>
+          <span class="preview-source">Teks penuh terindeks</span>
           ${snippetText?`<button class="btn-action" onclick="toggleFull('${reg.id}')">${isFull?'Ringkas':'Selengkapnya'}</button>`:''}
           <button class="btn-action" onclick="copySnippet('${reg.id}')">Salin teks</button>
           <button class="btn-action" onclick="copyRef('${esc(nomorRef)}')">Salin referensi</button>
-          <a class="btn-action primary" href="${PF[reg.sumber]}#page=${reg.halaman_awal}" target="_blank" onclick="event.stopPropagation()">Buka PDF ↗</a>
-        </div>
+          <a class="btn-action primary" href="${getPdfUrl(reg)}#page=${reg.halaman_awal}" target="_blank" onclick="event.stopPropagation()">Buka PDF ↗</a>
+        </div>`}
       </div>
       ${alsoIn}`:''}
     </div>`;
@@ -509,13 +514,13 @@ function render(){
 }
 
 function toggleCard(id){
-  if(expandedId===id){expandedId=null;}
-  else{
-    expandedId=id;
-    const reg=slimData.find(r=>r.id===id);
-    if(reg&&!loadedSumbers[reg.sumber]) loadFullIndex(reg.sumber).then(()=>render());
-  }
+  if(expandedId===id){expandedId=null;render();return;}
+  expandedId=id;
   render();
+  const reg=slimData.find(r=>r.id===id);
+  if(reg&&!loadedSumbers[reg.sumber]){
+    loadFullIndex(reg.sumber).then(()=>render());
+  }
 }
 function toggleFull(id){expandedFull[id]=!expandedFull[id];render();}
 
