@@ -365,21 +365,20 @@ function buildLunr(data,key){
 }
 
 function lunrSearch(idx,q){
+  // Hanya dipakai sebagai pre-filter cepat, bukan penentu utama
   if(!idx||!q||q.trim().length<2) return null;
   const tokens=q.trim().split(/\s+/).filter(t=>t.length>=2);
   if(tokens.length===0) return [];
   try{
-    // AND search: semua kata harus ada (pakai +)
-    const andQuery=tokens.map(t=>'+'+t+' +'+t+'*').join(' ');
-    const r=idx.search(andQuery);
-    if(r.length>0) return r;
-    // Fallback: coba tanpa wildcard tapi tetap AND
-    const andStrict=tokens.map(t=>'+'+t).join(' ');
-    const r2=idx.search(andStrict);
-    if(r2.length>0) return r2;
-    // Fallback terakhir: OR search jika AND tidak ada hasil
-    return idx.search(tokens.map(t=>t+'*').join(' '));
+    const strictQuery=tokens.map(t=>'+'+t).join(' ');
+    return idx.search(strictQuery)||[];
   }catch(_){return[];}
+}
+
+// Phrase match: cari frasa PERSIS di teks (urutan kata harus sama)
+function phraseMatch(text, q){
+  if(!q||q.trim().length<2) return false;
+  return text.toLowerCase().includes(q.trim().toLowerCase());
 }
 
 // ── Results ───────────────────────────────────────────────────────────────────
@@ -395,6 +394,14 @@ function getResults(){
     if(!usedFull&&lunrSlim)(lunrSearch(lunrSlim,q)||[]).forEach(x=>scoreMap[x.ref]=x.score);
     if(Object.keys(scoreMap).length>0) results=results.filter(r=>scoreMap[r.id]!==undefined);
     else results=[];
+    // Phrase filter: frasa harus muncul persis (bukan kata terpisah)
+    const phrase=q.trim().toLowerCase();
+    if(phrase.length>=2){
+      results=results.filter(r=>{
+        const hay=(r.judul+' '+(getFullTeks(r)||r.snippet||'')).toLowerCase();
+        return hay.includes(phrase);
+      });
+    }
   }
   if(filterSumber) results=results.filter(r=>r.sumber===filterSumber);
   if(filterJenis)  results=results.filter(r=>r.jenis===filterJenis);
