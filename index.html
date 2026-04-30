@@ -384,14 +384,23 @@ function buildLunr(data,key){
 }
 
 function lunrSearch(idx,q){
-  // Hanya dipakai sebagai pre-filter cepat, bukan penentu utama
   if(!idx||!q||q.trim().length<2) return null;
-  const tokens=q.trim().split(/\s+/).filter(t=>t.length>=2);
+  const tokens=q.trim().split(/\s+/).filter(t=>t.length>=1);
   if(tokens.length===0) return [];
   try{
-    const strictQuery=tokens.map(t=>'+'+t).join(' ');
-    return idx.search(strictQuery)||[];
-  }catch(_){return[];}
+    // Coba exact dulu
+    const exact=tokens.map(t=>'+'+t+'*').join(' ');
+    const r=idx.search(exact);
+    if(r&&r.length>0) return r;
+    // Fallback OR search
+    const orQ=tokens.map(t=>t+'*').join(' ');
+    return idx.search(orQ)||[];
+  }catch(_){
+    try{
+      // Fallback total
+      return idx.search(q.trim()+'*')||[];
+    }catch(_){return[];}
+  }
 }
 
 // Phrase match: cari frasa PERSIS di teks (urutan kata harus sama)
@@ -405,28 +414,40 @@ function getResults(){
   const q=query.trim();
   let results=slimData, scoreMap={};
   if(q.length>=2){
-    const subs=filterSumber?[filterSumber]:['perasuransian','penjaminan','dana_pensiun'];
-    let usedFull=false;
-    for(const s of subs){
-      if(lunrFull[s]){(lunrSearch(lunrFull[s],q)||[]).forEach(x=>{scoreMap[x.ref]=Math.max(scoreMap[x.ref]||0,x.score);});usedFull=true;}
-    }
-    if(!usedFull&&lunrSlim)(lunrSearch(lunrSlim,q)||[]).forEach(x=>scoreMap[x.ref]=x.score);
-    if(Object.keys(scoreMap).length>0) results=results.filter(r=>scoreMap[r.id]!==undefined);
-    else results=[];
-    // Phrase filter: frasa harus muncul persis di teks penuh
-    const phrase=q.trim().toLowerCase();
-    if(phrase.length>=2){
+    // Deteksi khusus pattern: "POJK 26", "SEOJK 10", "PADK 39", "POJK 26/2023" dll
+    const regexPattern=/^(POJK|SEOJK|PADK)\s+(\d+)(?:\/(\d{4}))?$/i;
+    const patternMatch=q.trim().match(regexPattern);
+    if(patternMatch){
+      const jenis=patternMatch[1].toUpperCase();
+      const nomor=patternMatch[2];
+      const tahun=patternMatch[3]||null;
       results=results.filter(r=>{
-        const fullTeks=getFullTeks(r); // hanya ada jika full index sudah dimuat
-        if(fullTeks){
-          // Full index sudah ada — cek di teks lengkap
-          return (r.judul+' '+fullTeks).toLowerCase().includes(phrase);
-        } else {
-          // Full index belum dimuat — tandai sebagai "pending", tampilkan dulu
-          // tapi akan di-filter ulang setelah full index siap (lihat ensureFullLoaded)
-          return true;
-        }
+        if(r.jenis!==jenis) return false;
+        if(r.nomor!==nomor) return false;
+        if(tahun&&String(r.tahun)!==tahun) return false;
+        return true;
       });
+    } else {
+      const subs=filterSumber?[filterSumber]:['perasuransian','penjaminan','dana_pensiun'];
+      let usedFull=false;
+      for(const s of subs){
+        if(lunrFull[s]){(lunrSearch(lunrFull[s],q)||[]).forEach(x=>{scoreMap[x.ref]=Math.max(scoreMap[x.ref]||0,x.score);});usedFull=true;}
+      }
+      if(!usedFull&&lunrSlim)(lunrSearch(lunrSlim,q)||[]).forEach(x=>scoreMap[x.ref]=x.score);
+      if(Object.keys(scoreMap).length>0) results=results.filter(r=>scoreMap[r.id]!==undefined);
+      else results=[];
+      // Phrase filter
+      const phrase=q.trim().toLowerCase();
+      if(phrase.length>=2){
+        results=results.filter(r=>{
+          const fullTeks=getFullTeks(r);
+          if(fullTeks){
+            return (r.judul+' '+fullTeks).toLowerCase().includes(phrase);
+          } else {
+            return true;
+          }
+        });
+      }
     }
   }
   if(filterSumber) results=results.filter(r=>r.sumber===filterSumber);
