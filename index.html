@@ -671,7 +671,9 @@ function render(){
 
   list.innerHTML=pageResults.map((reg,idx)=>{
     const isExp=expandedId===reg.id;
-    const isFullLoaded=loadedSumbers[reg.sumber];
+    const isFullLoaded=reg.sumber
+      ? loadedSumbers[reg.sumber]
+      : loadedSumbers['extra_'+(reg.jenis||'').toLowerCase()];
     const nomorRef=`${reg.jenis} No. ${reg.nomor} Tahun ${reg.tahun}`;
     const titleHL=highlight(esc(reg.judul),q);
     const pasalHits=isFullLoaded?getAllPasalHits(reg,q):[];
@@ -747,8 +749,12 @@ function toggleCard(id){
   expandedId=id;
   render();
   const reg=slimData.find(r=>r.id===id);
-  if(reg&&!loadedSumbers[reg.sumber]){
+  if(!reg) return;
+  if(reg.sumber&&!loadedSumbers[reg.sumber]){
     loadFullIndex(reg.sumber).then(()=>render());
+  } else if(!reg.sumber){
+    // UU/PP — sudah dimuat via loadExtraIndex, render ulang saja
+    render();
   }
 }
 function toggleFull(id){expandedFull[id]=!expandedFull[id];render();}
