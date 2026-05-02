@@ -1,0 +1,65 @@
+[
+  {
+    "id": "uu-4-2023",
+    "jenis": "UU",
+    "nomor": "4",
+    "tahun": 2023,
+    "judul": "Pengembangan Dan Penguatan Sektor Keuangan",
+    "pdf_file": "UU-4-2023_P2SK.pdf",
+    "pdf_url": "https://github.com/Faridfarid/Regulasi-PPDP/releases/download/v2026.05/UU-4-2023_P2SK.pdf"
+  },
+  {
+    "id": "uu-6-2023",
+    "jenis": "UU",
+    "nomor": "6",
+    "tahun": 2023,
+    "judul": "Penetapan Peraturan Pemerintah Pengganti Undang-Undang Nomor 2 Tahun 2022 Tentang Cipta Kerja Menjadi Undang-Undang",
+    "pdf_file": "UU-6-2023_ciptaker.pdf",
+    "pdf_url": "https://github.com/Faridfarid/Regulasi-PPDP/releases/download/v2026.05/UU-6-2023_ciptaker.pdf"
+  },
+  {
+    "id": "uu-1-2016",
+    "jenis": "UU",
+    "nomor": "1",
+    "tahun": 2016,
+    "judul": "Penjaminan",
+    "pdf_file": "UU-1-2016_Penjaminan.pdf",
+    "pdf_url": "https://github.com/Faridfarid/Regulasi-PPDP/releases/download/v2026.05/UU-1-2016_Penjaminan.pdf"
+  },
+  {
+    "id": "uu-40-2014",
+    "jenis": "UU",
+    "nomor": "40",
+    "tahun": 2014,
+    "judul": "Perasuransian",
+    "pdf_file": "UU-40-2014_Asuransi.pdf",
+    "pdf_url": "https://github.com/Faridfarid/Regulasi-PPDP/releases/download/v2026.05/UU-40-2014_Asuransi.pdf"
+  },
+  {
+    "id": "uu-24-2011",
+    "jenis": "UU",
+    "nomor": "24",
+    "tahun": 2011,
+    "judul": "Badan Penyelenggara Jaminan Sosial",
+    "pdf_file": "UU-24-2011_bpjs.pdf",
+    "pdf_url": "https://github.com/Faridfarid/Regulasi-PPDP/releases/download/v2026.05/UU-24-2011_bpjs.pdf"
+  },
+  {
+    "id": "uu-40-2004",
+    "jenis": "UU",
+    "nomor": "40",
+    "tahun": 2004,
+    "judul": "Sistem Jaminan Sosial Nasional",
+    "pdf_file": "UU-40-2004_SJSN.pdf",
+    "pdf_url": "https://github.com/Faridfarid/Regulasi-PPDP/releases/download/v2026.05/UU-40-2004_SJSN.pdf"
+  },
+  {
+    "id": "uu-11-1969",
+    "jenis": "UU",
+    "nomor": "11",
+    "tahun": 1969,
+    "judul": "UU Nomor 11 Tahun 1969 tentang Taspen",
+    "pdf_file": "UU-11-1969_taspen.pdf",
+    "pdf_url": "https://github.com/Faridfarid/Regulasi-PPDP/releases/download/v2026.05/UU-11-1969_taspen.pdf"
+  }
+]

@@ -15,6 +15,8 @@
   --pojk:#1a4f8a;--pojk-bg:#dce8f7;
   --seojk:#1a6b4a;--seojk-bg:#d4efe4;
   --padk:#7a3a00;--padk-bg:#fde8d0;
+  --uu:#7a1a1a;--uu-bg:#f7dada;
+  --pp:#1a4a6b;--pp-bg:#d4e8f7;
   --asuransi:#4a1a6b;--asuransi-bg:#ecdff7;
   --penjaminan-c:#1a5a5a;--penjaminan-bg:#d4eeee;
   --dana:#5a1a1a;--dana-bg:#f7dada;
@@ -99,6 +101,8 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .badge-POJK{color:var(--pojk);border-color:var(--pojk);background:var(--pojk-bg)}
 .badge-SEOJK{color:var(--seojk);border-color:var(--seojk);background:var(--seojk-bg)}
 .badge-PADK{color:var(--padk);border-color:var(--padk);background:var(--padk-bg)}
+.badge-UU{color:var(--uu);border-color:var(--uu);background:var(--uu-bg)}
+.badge-PP{color:var(--pp);border-color:var(--pp);background:var(--pp-bg)}
 .badge-nomor{font-size:12px;color:var(--muted);font-family:var(--mono)}
 .badge-sumber{font-size:11px;font-weight:500;padding:3px 9px;border-radius:20px}
 .sumber-perasuransian{background:var(--asuransi-bg);color:var(--asuransi)}
@@ -253,6 +257,8 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
         <option value="POJK">POJK</option>
         <option value="SEOJK">SEOJK</option>
         <option value="PADK">PADK</option>
+        <option value="UU">UU</option>
+        <option value="PP">PP</option>
       </select>
       <select class="filter-select" id="filterTahun" onchange="handleDropdown()">
         <option value="">Semua Tahun</option>
@@ -319,11 +325,14 @@ let sortMode='tahun-desc', expandedId=null, expandedFull={}, currentPage=1;
 const PAGE_SIZE=10;
 let searchTimer=null;
 
-const SL={perasuransian:'Perasuransian',penjaminan:'Penjaminan',dana_pensiun:'Dana Pensiun'};
-const RELEASE_URL='https://github.com/Faridfarid/Regulasi-PPDP/releases/download/v2026.03/';
-// PDF per regulasi — langsung buka file yang tepat
+const SL={perasuransian:'Perasuransian',penjaminan:'Penjaminan',dana_pensiun:'Dana Pensiun',uu:'Undang-Undang',pp:'Peraturan Pemerintah'};
+const RELEASE_POJK='https://github.com/Faridfarid/Regulasi-PPDP/releases/download/v2026.03/';
+const RELEASE_UU_PP='https://github.com/Faridfarid/Regulasi-PPDP/releases/download/v2026.05/';
+
+// Tentukan release URL berdasarkan jenis regulasi
 function getPdfUrl(reg){
-  return RELEASE_URL + reg.pdf_file;
+  if(reg.jenis==='UU'||reg.jenis==='PP') return RELEASE_UU_PP + reg.pdf_file;
+  return RELEASE_POJK + reg.pdf_file;
 }
 
 // ── Load ──────────────────────────────────────────────────────────────────────
@@ -337,8 +346,11 @@ async function loadSlimIndex(){
     buildRekap(json.stats);
     buildStats(json.stats);
     render();
-    // Load semua full index di background supaya phrase filter langsung akurat
+    // Load semua full index di background
     ['perasuransian','penjaminan','dana_pensiun'].forEach(s=>loadFullIndex(s));
+    // Load UU dan PP jika ada
+    loadExtraIndex('uu');
+    loadExtraIndex('pp');
   }catch(e){
     document.getElementById('resultsList').innerHTML=`<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Gagal memuat data</h3><p>Pastikan <code>search_index.json</code> ada di folder yang sama.</p><p style="margin-top:6px;font-size:11px;color:var(--muted2)">Error: ${e.message}</p></div>`;
     document.getElementById('resultsInfo').textContent='Error';
@@ -365,9 +377,34 @@ async function loadFullIndex(sumber){
   }
 }
 
+// Load index UU/PP — format array langsung (bukan {regulasi:[...]})
+async function loadExtraIndex(jenis){
+  const key='extra_'+jenis;
+  if(loadedSumbers[key]) return;
+  try{
+    const res=await fetch('index_'+jenis+'.json');
+    if(!res.ok) return; // file belum ada, skip saja
+    const json=await res.json();
+    const arr=Array.isArray(json)?json:(json.regulasi||[]);
+    if(arr.length===0) return;
+    // Masukkan ke slimData agar langsung muncul di hasil
+    const existingIds=new Set(slimData.map(r=>r.id));
+    const newEntries=arr.filter(r=>!existingIds.has(r.id));
+    slimData.push(...newEntries);
+    // Juga simpan di fullData untuk teks search
+    fullData[key]=arr;
+    buildLunr(arr, key);
+    loadedSumbers[key]=true;
+    buildYearDropdown();
+    render();
+    console.log(`Loaded ${newEntries.length} entri ${jenis.toUpperCase()} baru`);
+  }catch(e){console.warn('Extra index failed:',jenis,e);}
+}
+
 async function ensureFullLoaded(){
   const todo=filterSumber?[filterSumber]:['perasuransian','penjaminan','dana_pensiun'];
   for(const s of todo){if(!loadedSumbers[s]) await loadFullIndex(s);}
+  // UU dan PP sudah dimuat via loadExtraIndex, tidak perlu di-await lagi
 }
 
 // ── Lunr ──────────────────────────────────────────────────────────────────────
@@ -429,8 +466,10 @@ function getResults(){
       });
     } else {
       const subs=filterSumber?[filterSumber]:['perasuransian','penjaminan','dana_pensiun'];
+      // Tambah lunr keys untuk UU dan PP
+      const allKeys=[...subs,'extra_uu','extra_pp'];
       let usedFull=false;
-      for(const s of subs){
+      for(const s of allKeys){
         if(lunrFull[s]){(lunrSearch(lunrFull[s],q)||[]).forEach(x=>{scoreMap[x.ref]=Math.max(scoreMap[x.ref]||0,x.score);});usedFull=true;}
       }
       if(!usedFull&&lunrSlim)(lunrSearch(lunrSlim,q)||[]).forEach(x=>scoreMap[x.ref]=x.score);
@@ -470,7 +509,12 @@ function getResults(){
 
 // ── Snippet ───────────────────────────────────────────────────────────────────
 function getFullTeks(reg){
-  return fullData[reg.sumber]?.find(r=>r.id===reg.id)?.teks||'';
+  // Cek fullData per sumber (POJK/SEOJK/PADK)
+  const fromSumber=fullData[reg.sumber]?.find(r=>r.id===reg.id)?.teks||'';
+  if(fromSumber) return fromSumber;
+  // Cek fullData extra (UU/PP)
+  const jenis=(reg.jenis||'').toLowerCase();
+  return fullData['extra_'+jenis]?.find(r=>r.id===reg.id)?.teks||'';
 }
 
 // Ambil semua pasal yang mengandung semua token query
@@ -634,12 +678,14 @@ function render(){
         <span class="badge-nomor">${reg.nomor}/${reg.tahun}</span>
         ${reg.juga_berlaku_di?.length
           ? reg.juga_berlaku_di.map(b=>`<span class="badge-sumber sumber-${b.toLowerCase().replace(/ /g,'_')}">${b}</span>`).join('')
-          : `<span class="badge-sumber sumber-${reg.sumber}">${SL[reg.sumber]||reg.sumber}</span>`
+          : reg.sumber
+            ? `<span class="badge-sumber sumber-${reg.sumber}">${SL[reg.sumber]||reg.sumber}</span>`
+            : `<span class="badge-sumber" style="background:#f3f4f6;color:#6b7280">${reg.jenis==='UU'?'Undang-Undang':'Peraturan Pemerintah'}</span>`
         }
         ${reg.jumlah_pasal>0?`<span class="badge-pasal">${reg.jumlah_pasal} pasal</span>`:''}
       </div>
       <div class="card-title">${titleHL}</div>
-      <div class="card-info">${reg.jenis} ${reg.nomor}/${reg.tahun} · ${SL[reg.sumber]||reg.sumber}</div>
+      <div class="card-info">${reg.jenis} ${reg.nomor}/${reg.tahun}${reg.sumber?' · '+(SL[reg.sumber]||reg.sumber):''}</div>
       ${isExp?`
       <div class="card-preview" onclick="event.stopPropagation()">
         ${!isFullLoaded
