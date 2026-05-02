@@ -171,6 +171,29 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
 .page-btn.disabled{opacity:.4;cursor:default;pointer-events:none}
 .page-info{font-size:12px;color:var(--muted);margin:0 4px}
 
+/* ── Progress bar ── */
+#progress-bar{position:fixed;top:0;left:0;height:3px;width:0%;background:var(--accent);z-index:9999;transition:width .3s ease,opacity .4s ease;opacity:1;border-radius:0 2px 2px 0}
+#progress-bar.done{width:100%!important;opacity:0}
+
+/* ── Skeleton loading ── */
+.skeleton-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1.4rem 1.6rem;margin-bottom:10px}
+.skeleton-line{background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:4px;height:12px;margin-bottom:10px}
+.skeleton-line.wide{width:60%}
+.skeleton-line.med{width:40%}
+.skeleton-line.short{width:25%}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+/* ── Pulse dot ── */
+.cutoff-pill{position:relative;padding-left:20px!important}
+.cutoff-pill::before{content:'';position:absolute;left:8px;top:50%;transform:translateY(-50%);width:7px;height:7px;border-radius:50%;background:var(--accent);animation:pulse-dot 2s ease-in-out infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:translateY(-50%) scale(1)}50%{opacity:.4;transform:translateY(-50%) scale(.7)}}
+
+/* ── Card animation ── */
+.reg-card{opacity:0;transform:translateY(8px);animation:card-in .3s ease forwards}
+@keyframes card-in{to{opacity:1;transform:translateY(0)}}
+.reg-card:hover{border-color:var(--border2);box-shadow:0 6px 20px rgba(0,0,0,0.09);transform:translateY(-2px)!important}
+.reg-card.expanded{border-color:var(--accent);transform:translateY(-2px)!important}
+
 /* Toast */
 .toast{position:fixed;bottom:2rem;right:2rem;background:var(--accent);color:white;padding:9px 18px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 4px 14px rgba(0,0,0,0.15);transition:opacity .3s}
 
@@ -189,6 +212,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
 </style>
 </head>
 <body>
+<div id="progress-bar"></div>
 
 <!-- Header -->
 <header>
@@ -218,7 +242,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
       <div class="stat-item">
         <span class="stat-num" id="s-regulasi">—</span>
         <span class="stat-label">Regulasi</span>
-        <span class="stat-sub">POJK · SEOJK · PADK</span>
+        <span class="stat-sub" id="s-regulasi-sub">POJK · SEOJK · PADK</span>
       </div>
       <div class="stat-item">
         <span class="stat-num" id="s-pasal">—</span>
@@ -337,6 +361,8 @@ function getPdfUrl(reg){
 
 // ── Load ──────────────────────────────────────────────────────────────────────
 async function loadSlimIndex(){
+  progressStart();
+  showSkeleton();
   try{
     const res=await fetch('search_index.json');
     if(!res.ok) throw new Error('HTTP '+res.status);
@@ -345,13 +371,16 @@ async function loadSlimIndex(){
     buildLunr(slimData,'slim');
     buildRekap(json.stats);
     buildStats(json.stats);
+    progressStep(40);
     render();
     // Load semua full index di background
     ['perasuransian','penjaminan','dana_pensiun'].forEach(s=>loadFullIndex(s));
     // Load UU dan PP jika ada
     loadExtraIndex('uu');
     loadExtraIndex('pp');
+    progressDone();
   }catch(e){
+    progressDone();
     document.getElementById('resultsList').innerHTML=`<div class="empty-state"><div class="empty-icon">⚠️</div><h3>Gagal memuat data</h3><p>Pastikan <code>search_index.json</code> ada di folder yang sama.</p><p style="margin-top:6px;font-size:11px;color:var(--muted2)">Error: ${e.message}</p></div>`;
     document.getElementById('resultsInfo').textContent='Error';
   }
@@ -396,6 +425,7 @@ async function loadExtraIndex(jenis){
     buildLunr(arr, key);
     loadedSumbers[key]=true;
     buildYearDropdown();
+    rebuildStats();
     render();
     console.log(`Loaded ${newEntries.length} entri ${jenis.toUpperCase()} baru`);
   }catch(e){console.warn('Extra index failed:',jenis,e);}
@@ -639,7 +669,7 @@ function render(){
     pag.innerHTML='';
   }
 
-  list.innerHTML=pageResults.map(reg=>{
+  list.innerHTML=pageResults.map((reg,idx)=>{
     const isExp=expandedId===reg.id;
     const isFullLoaded=loadedSumbers[reg.sumber];
     const nomorRef=`${reg.jenis} No. ${reg.nomor} Tahun ${reg.tahun}`;
@@ -672,7 +702,7 @@ function render(){
       ?`<strong>${pasalHits.length} pasal</strong> mengandung kata kunci`
       :'Teks penuh terindeks';
 
-    return `<div class="reg-card${isExp?' expanded':''}" data-id="${reg.id}" onclick="toggleCard('${reg.id}')">
+    return `<div class="reg-card${isExp?' expanded':''}" data-id="${reg.id}" style="animation-delay:${idx*50}ms" onclick="toggleCard('${reg.id}')">
       <div class="card-badges">
         <span class="badge-jenis badge-${reg.jenis}">${reg.jenis}</span>
         <span class="badge-nomor">${reg.nomor}/${reg.tahun}</span>
@@ -768,15 +798,74 @@ function toast(msg){const t=document.createElement('div');t.className='toast';t.
 function showStatus(msg){document.getElementById('statusText').textContent=msg;document.getElementById('searchStatus').classList.add('show');}
 function hideStatus(){document.getElementById('searchStatus').classList.remove('show');}
 
+// ── Progress bar ──────────────────────────────────────────────────────────────
+let progressVal=0;
+function progressStart(){progressVal=10;document.getElementById('progress-bar').style.width=progressVal+'%';document.getElementById('progress-bar').style.opacity='1';}
+function progressStep(v){progressVal=Math.min(90,v);document.getElementById('progress-bar').style.width=progressVal+'%';}
+function progressDone(){
+  document.getElementById('progress-bar').style.width='100%';
+  setTimeout(()=>document.getElementById('progress-bar').classList.add('done'),300);
+  setTimeout(()=>{document.getElementById('progress-bar').classList.remove('done');document.getElementById('progress-bar').style.width='0%';},800);
+}
+
+// ── Count-up animation ────────────────────────────────────────────────────────
+function countUp(el,target,duration){
+  if(!el) return;
+  const start=parseInt(el.textContent.replace(/\D/g,''))||0;
+  if(start===target) return;
+  const steps=40, step=(target-start)/steps;
+  let cur=start, i=0;
+  const t=setInterval(()=>{
+    i++; cur+=step;
+    if(i>=steps){cur=target;clearInterval(t);}
+    el.textContent=Math.round(cur).toLocaleString('id');
+  }, duration/steps);
+}
+
+// ── Skeleton loading ──────────────────────────────────────────────────────────
+function showSkeleton(){
+  document.getElementById('resultsList').innerHTML=[1,2,3].map(()=>`
+    <div class="skeleton-card">
+      <div style="display:flex;gap:8px;margin-bottom:12px">
+        <div class="skeleton-line short" style="height:22px;width:50px;border-radius:5px"></div>
+        <div class="skeleton-line short" style="height:22px;width:60px;border-radius:5px"></div>
+        <div class="skeleton-line short" style="height:22px;width:80px;border-radius:5px"></div>
+      </div>
+      <div class="skeleton-line wide" style="height:16px"></div>
+      <div class="skeleton-line med" style="height:12px;margin-top:6px"></div>
+    </div>`).join('');
+}
+
 // ── Stats ─────────────────────────────────────────────────────────────────────
 function buildStats(stats){
   if(!stats?.global) return;
   const g=stats.global;
-  document.getElementById('s-regulasi').textContent=g.total_regulasi_unik?.toLocaleString('id')||'—';
-  document.getElementById('s-pasal').textContent=(g.total_pasal||0).toLocaleString('id');
-  document.getElementById('s-halaman').textContent=(g.total_halaman||0).toLocaleString('id');
-  const d=g.rentang_tahun?.dari,s=g.rentang_tahun?.sampai;
+  countUp(document.getElementById('s-regulasi'), g.total_regulasi_unik||0, 800);
+  countUp(document.getElementById('s-pasal'), g.total_pasal||0, 900);
+  countUp(document.getElementById('s-halaman'), g.total_halaman||0, 1000);
+  const d=g.rentang_tahun?.dari, s=g.rentang_tahun?.sampai;
   document.getElementById('s-tahun').textContent=d&&s?d+'–'+s:'—';
+}
+
+// Hitung ulang stats dari semua data yang sudah dimuat (termasuk UU/PP)
+function rebuildStats(){
+  const total=slimData.length;
+  const totalPasal=slimData.reduce((a,r)=>a+(r.jumlah_pasal||0),0);
+  const years=slimData.map(r=>Number(r.tahun)).filter(Boolean);
+  const minYear=years.length?Math.min(...years):0;
+  const maxYear=years.length?Math.max(...years):0;
+  const jenisList=[...new Set(slimData.map(r=>r.jenis))].sort();
+
+  countUp(document.getElementById('s-regulasi'), total, 600);
+  countUp(document.getElementById('s-pasal'), totalPasal, 700);
+  // halaman: dari fullData
+  const totalHal=Object.values(fullData).flat().reduce((a,r)=>a+(r.jumlah_halaman||0),0);
+  if(totalHal>0) countUp(document.getElementById('s-halaman'), totalHal, 800);
+  if(minYear&&maxYear) document.getElementById('s-tahun').textContent=minYear+'–'+maxYear;
+
+  // update sub-label regulasi
+  const subEl=document.getElementById('s-regulasi-sub');
+  if(subEl) subEl.textContent=jenisList.join(' · ');
 }
 
 // ── Rekap footer ──────────────────────────────────────────────────────────────
