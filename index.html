@@ -230,7 +230,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
     </div>
     <div class="header-spacer"></div>
     <span class="loading-badge" id="loadingBadge">⟳ Memuat index...</span>
-    <span class="cutoff-pill">Update Maret 2026</span>
+    <span class="cutoff-pill" id="cutoffPill">Update Maret 2026</span>
   </div>
 </header>
 
@@ -344,6 +344,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
 // ── State ──────────────────────────────────────────────────────────────────────
 let slimData=[], fullData={}, loadedSumbers={}, loadingNow=false;
 let lunrSlim=null, lunrFull={};
+let siVersi='Maret 2026';
 let query='', filterSumber='', filterJenis='', filterTahun='';
 let sortMode='tahun-desc', expandedId=null, expandedFull={}, currentPage=1;
 const PAGE_SIZE=10;
@@ -368,6 +369,8 @@ async function loadSlimIndex(){
     if(!res.ok) throw new Error('HTTP '+res.status);
     const json=await res.json();
     slimData=json.regulasi;
+    siVersi=json.meta?.versi||'Maret 2026';
+    document.getElementById('cutoffPill').textContent='Update '+siVersi;
     buildLunr(slimData,'slim');
     buildRekap(json.stats);
     buildStats(json.stats);
@@ -889,7 +892,7 @@ function buildRekap(stats){
   cards.push(`<div class="rekap-card" style="border-color:var(--accent);background:var(--accent-bg)"><div class="rekap-card-title" style="color:var(--accent)">Semua Bidang</div>${totalRows}<div class="rekap-total"><span style="color:var(--muted)">${g?.total_regulasi_unik} reg · ${(g?.total_pasal||0).toLocaleString('id')} pasal</span><span class="rekap-n" style="color:var(--accent)">${(g?.total_halaman||0).toLocaleString('id')} hal</span></div></div>`);
   document.getElementById('rekapGrid').innerHTML=cards.join('');
   const cross=g?.lintas_sektor||0;
-  document.getElementById('footerNote').innerHTML=`<strong>Catatan:</strong> Data diindeks dari 3 kompilasi PDF OJK edisi <strong>Maret 2026</strong> yang diterbitkan oleh Departemen Pengaturan dan Pengembangan Perasuransian, Penjaminan, dan Dana Pensiun (PPDP). Total <strong>${g?.total_regulasi_unik} regulasi unik</strong> dengan <strong>${(g?.total_pasal||0).toLocaleString('id')} pasal</strong> — ${cross} di antaranya berlaku lintas bidang. Peraturan yang diterbitkan setelah Maret 2026 belum terindeks.`;
+  document.getElementById('footerNote').innerHTML=`<strong>Catatan:</strong> Data diindeks dari 3 kompilasi PDF OJK edisi <strong>Maret 2026</strong> yang diterbitkan oleh Departemen Pengaturan dan Pengembangan Perasuransian, Penjaminan, dan Dana Pensiun (PPDP). Total <strong>${g?.total_regulasi_unik} regulasi unik</strong> dengan <strong>${(g?.total_pasal||0).toLocaleString('id')} pasal</strong> — ${cross} di antaranya berlaku lintas bidang. Regulasi yang terbit setelah edisi tersebut ditambahkan terpisah. Data terakhir diperbarui <strong>${siVersi}</strong>.`;
 }
 
 // ── Dropdown year ─────────────────────────────────────────────────────────────
