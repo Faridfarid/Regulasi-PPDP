@@ -1,80 +1,115 @@
 {
   "meta": {
-    "total": 100,
+    "total": 102,
     "sumber": [
       "Perasuransian",
       "Penjaminan",
       "Dana Pensiun"
     ],
-    "generated": "2026-04-25T17:52:52.994052",
-    "versi": "Maret 2026"
+    "generated": "2026-11-13T10:13:44.757286",
+    "versi": "November 2026"
   },
   "stats": {
     "global": {
-      "total_regulasi": 100,
-      "total_pasal": 5320,
-      "total_halaman": 8295,
+      "total_regulasi": 102,
+      "total_pasal": 5386,
+      "total_halaman": 8354,
       "per_jenis": {
-        "POJK": 58,
+        "POJK": 60,
         "SEOJK": 38,
         "PADK": 4
       },
       "rentang_tahun": {
         "dari": 2013,
-        "sampai": 2025
+        "sampai": 2026
       },
-      "total_regulasi_unik": 100,
-      "lintas_sektor": 37
+      "total_regulasi_unik": 102,
+      "lintas_sektor": 38
     },
     "per_bidang": {
       "perasuransian": {
         "label": "Perasuransian",
-        "total_regulasi": 80,
-        "total_pasal": 4033,
-        "total_halaman": 5421,
+        "total_regulasi": 82,
+        "total_pasal": 4099,
+        "total_halaman": 5480,
         "per_jenis": {
-          "POJK": 48,
+          "POJK": 50,
           "SEOJK": 30,
           "PADK": 2
         },
         "rentang_tahun": {
           "dari": 2013,
-          "sampai": 2025
+          "sampai": 2026
         }
       },
       "penjaminan": {
         "label": "Penjaminan",
-        "total_regulasi": 43,
-        "total_pasal": 1900,
-        "total_halaman": 3375,
+        "total_regulasi": 44,
+        "total_pasal": 1926,
+        "total_halaman": 3403,
         "per_jenis": {
-          "POJK": 29,
+          "POJK": 30,
           "SEOJK": 12,
           "PADK": 2
         },
         "rentang_tahun": {
           "dari": 2013,
-          "sampai": 2025
+          "sampai": 2026
         }
       },
       "dana_pensiun": {
         "label": "Dana Pensiun",
-        "total_regulasi": 42,
-        "total_pasal": 2467,
-        "total_halaman": 2760,
+        "total_regulasi": 43,
+        "total_pasal": 2493,
+        "total_halaman": 2788,
         "per_jenis": {
-          "POJK": 29,
+          "POJK": 30,
           "SEOJK": 13,
           "PADK": 0
         },
         "rentang_tahun": {
           "dari": 2013,
-          "sampai": 2025
+          "sampai": 2026
         }
       }
     }
   },
   "regulasi": [
+    {
+      "id": "perasuransian-pojk-19-2026",
+      "jenis": "POJK",
+      "nomor": "19",
+      "tahun": 2026,
+      "judul": "Integritas Pelaporan Keuangan Perusahaan Perasuransian, Lembaga Penjamin, Dana Pensiun, serta Lembaga Khusus Bidang Perasuransian, Penjaminan, dan Dana Pensiun",
+      "sumber": "perasuransian",
+      "label_sumber": "Perasuransian",
+      "halaman_awal": 1,
+      "halaman_akhir": 28,
+      "jumlah_pasal": 26,
+      "jumlah_halaman": 28,
+      "pdf_file": "pojk-19-2026.pdf",
+      "snippet": "PERATURAN OTORITAS JASA KEUANGAN\nREPUBLIK INDONESIA\nNOMOR 19 TAHUN 2026\nTENTANG\nINTEGRITAS PELAPORAN KEUANGAN PERUSAHAAN PERASURANSIAN,\nLEMBAGA PENJAMIN, DANA PENSIUN, SERTA LEMBAGA KHUSUS BIDANG\nPERASURANSIAN, PENJAMINAN, DAN DANA PENSIUN\nDENGAN RAHMAT TUHAN YANG MAHA ESA\nDEWAN KOMISIONER OTORITAS JASA KEUANGAN,\nMenimbang\n: a.\nb.\nc.\nMengingat\n: 1.\nbahwa informasi keuangan dan laporan keuangan pada\nperusahaan perasuransian, lembaga penjamin, dana\npensiun, serta lembaga khusus bidang perasuransia...",
+      "juga_berlaku_di": [
+        "Perasuransian",
+        "Penjaminan",
+        "Dana Pensiun"
+      ]
+    },
+    {
+      "id": "perasuransian-pojk-18-2026",
+      "jenis": "POJK",
+      "nomor": "18",
+      "tahun": 2026,
+      "judul": "Perhitungan Solvabilitas Perusahaan Asuransi dan Perusahaan Reasuransi",
+      "sumber": "perasuransian",
+      "label_sumber": "Perasuransian",
+      "halaman_awal": 1,
+      "halaman_akhir": 31,
+      "jumlah_pasal": 40,
+      "jumlah_halaman": 31,
+      "pdf_file": "pojk-18-2026.pdf",
+      "snippet": "PERATURAN OTORITAS JASA KEUANGAN\nREPUBLIK INDONESIA\nNOMOR 18 TAHUN 2026\nTENTANG\nPERHITUNGAN SOLVABILITAS PERUSAHAAN ASURANSI DAN PERUSAHAAN\nREASURANSI\nDENGAN RAHMAT TUHAN YANG MAHA ESA\nDEWAN KOMISIONER OTORITAS JASA KEUANGAN,\nMenimbang\n: a.\nb.\nc.\nMengingat\n: 1.\n2.\nbahwa perkembangan dinamika kondisi ekonomi\nmemengaruhi profil risiko industri perasuransian\nsehingga memerlukan penyesuaian ketentuan mengenai\nsolvabilitas melalui kalibrasi parameter pengukuran\nkecukupan modal agar lebih mencerminkan..."
+    },
     {
       "id": "perasuransian-pojk-23-2023",
       "jenis": "POJK",
