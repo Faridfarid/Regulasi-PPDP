@@ -1,21 +1,21 @@
 {
   "meta": {
-    "total": 102,
+    "total": 103,
     "sumber": [
       "Perasuransian",
       "Penjaminan",
       "Dana Pensiun"
     ],
-    "generated": "2026-11-13T10:13:44.757286",
+    "generated": "2026-11-16T08:40:38.999364",
     "versi": "November 2026"
   },
   "stats": {
     "global": {
-      "total_regulasi": 102,
-      "total_pasal": 5386,
-      "total_halaman": 8354,
+      "total_regulasi": 103,
+      "total_pasal": 5405,
+      "total_halaman": 8367,
       "per_jenis": {
-        "POJK": 60,
+        "POJK": 61,
         "SEOJK": 38,
         "PADK": 4
       },
@@ -23,7 +23,7 @@
         "dari": 2013,
         "sampai": 2026
       },
-      "total_regulasi_unik": 102,
+      "total_regulasi_unik": 103,
       "lintas_sektor": 38
     },
     "per_bidang": {
@@ -44,11 +44,11 @@
       },
       "penjaminan": {
         "label": "Penjaminan",
-        "total_regulasi": 44,
-        "total_pasal": 1926,
-        "total_halaman": 3403,
+        "total_regulasi": 45,
+        "total_pasal": 1945,
+        "total_halaman": 3416,
         "per_jenis": {
-          "POJK": 30,
+          "POJK": 31,
           "SEOJK": 12,
           "PADK": 2
         },
@@ -75,6 +75,21 @@
     }
   },
   "regulasi": [
+    {
+      "id": "penjaminan-pojk-11-2026",
+      "jenis": "POJK",
+      "nomor": "11",
+      "tahun": 2026,
+      "judul": "Laporan Berkala Lembaga Penjamin",
+      "sumber": "penjaminan",
+      "label_sumber": "Penjaminan",
+      "halaman_awal": 1,
+      "halaman_akhir": 13,
+      "jumlah_pasal": 19,
+      "jumlah_halaman": 13,
+      "pdf_file": "pojk-11-2026.pdf",
+      "snippet": "PERATURAN OTORITAS JASA KEUANGAN\nREPUBLIK INDONESIA\nNOMOR 11 TAHUN 2026\nTENTANG\nLAPORAN BERKALA LEMBAGA PENJAMIN\nDENGAN RAHMAT TUHAN YANG MAHA ESA\nDEWAN KOMISIONER OTORITAS JASA KEUANGAN,\nMenimbang\n:\na.\nb.\nMengingat\n:\n1.\n2.\nbahwa\nuntuk\nmenyempurnakan\npengaturan\nmengenai laporan berkala lembaga penjamin yang\ntelah diatur dalam beberapa Peraturan Otoritas Jasa\nKeuangan guna meningkatkan efektivitas pelaporan\ndan pengawasan berbasis risiko bagi lembaga\npenjamin,\nperlu\nmengintegrasikan\ninformasi\npel..."
+    },
     {
       "id": "perasuransian-pojk-19-2026",
       "jenis": "POJK",
