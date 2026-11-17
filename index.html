@@ -823,10 +823,11 @@ function progressDone(){
 function countUp(el,target,duration){
   if(!el) return;
   const start=parseInt(el.textContent.replace(/\D/g,''))||0;
-  if(start===target) return;
+  if(start===target){ if(el._countTimer) clearInterval(el._countTimer); return; }
+  if(el._countTimer) clearInterval(el._countTimer);
   const steps=40, step=(target-start)/steps;
   let cur=start, i=0;
-  const t=setInterval(()=>{
+  const t=el._countTimer=setInterval(()=>{
     i++; cur+=step;
     if(i>=steps){cur=target;clearInterval(t);}
     el.textContent=Math.round(cur).toLocaleString('id');
