@@ -356,6 +356,8 @@ const RELEASE_UU_PP='https://github.com/Faridfarid/Regulasi-PPDP/releases/downlo
 
 // Tentukan release URL berdasarkan jenis regulasi
 function getPdfUrl(reg){
+  // PDF disimpan di Google Drive (pdf_url); fallback ke GitHub Release
+  if(reg.pdf_url&&reg.pdf_url.includes('drive.google.com')) return reg.pdf_url;
   if(reg.jenis==='UU'||reg.jenis==='PP') return RELEASE_UU_PP + reg.pdf_file;
   return RELEASE_POJK + reg.pdf_file;
 }
