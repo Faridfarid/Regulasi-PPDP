@@ -33,7 +33,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
 
 /* ── Header ── */
 header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 2rem}
-.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;height:62px}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;min-height:62px;padding:8px 0}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);flex-shrink:0}
 .logo-icon{width:32px;height:32px;border:1.5px solid var(--text);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;font-family:var(--font)}
 .logo-text{font-size:15px;font-weight:700;letter-spacing:-.3px}
@@ -41,11 +41,22 @@ header{background:var(--surface);border-bottom:1px solid var(--border);padding:0
 .header-greeting{display:flex;flex-direction:column;gap:2px}
 .header-greeting-title{font-size:20px;font-weight:600;color:var(--text);line-height:1.25;letter-spacing:-.3px}
 .header-greeting-sub{font-size:12.5px;font-weight:400;color:var(--muted);line-height:1.4}
+.header-greeting-by{font-size:11.5px;color:var(--muted2);line-height:1.4;display:block}
+.header-greeting-by strong{color:var(--accent);font-weight:600}
+.header-greeting-by::before{content:'';display:inline-block;width:14px;height:1px;background:var(--border2);vertical-align:middle;margin-right:6px}
 .header-spacer{flex:1}
 .cutoff-pill{font-size:11px;font-weight:500;color:var(--accent);background:var(--accent-bg);border:1px solid rgba(30,77,43,.2);border-radius:20px;padding:3px 10px;flex-shrink:0}
 .loading-badge{font-size:11px;color:var(--muted);display:none}
 .loading-badge.show{display:inline}
 
+@media(max-width:768px){
+  header{padding:0 1rem}
+  .header-inner{flex-wrap:wrap;gap:6px 12px;padding:12px 0}
+  .header-spacer{display:none}
+  .cutoff-pill{margin-left:auto}
+  .header-greeting{order:3;flex-basis:100%}
+  .header-greeting-title{font-size:17px}
+}
 /* ── Hero stats ── */
 .hero{background:var(--surface);border-bottom:1px solid var(--border);padding:1.6rem 2rem 1.4rem}
 .hero-inner{max-width:1100px;margin:0 auto;text-align:center}
@@ -227,6 +238,7 @@ footer{background:var(--surface);border-top:1px solid var(--border);padding:2rem
     <div class="header-greeting">
       <span class="header-greeting-title">Selamat datang! 👋</span>
       <span class="header-greeting-sub">Temukan dan jelajahi regulasi PPDP dengan mudah.</span>
+      <span class="header-greeting-by">Project by <strong>Farid</strong> · Direktorat Pengawasan Asuransi Jiwa</span>
     </div>
     <div class="header-spacer"></div>
     <span class="loading-badge" id="loadingBadge">⟳ Memuat index...</span>
