@@ -403,24 +403,30 @@ async function loadSlimIndex(){
   }
 }
 
-async function loadFullIndex(sumber){
-  if(loadedSumbers[sumber]||loadingNow) return;
-  loadingNow=true;
+// Satu janji per bidang: pemanggil berikutnya menunggu muatan yang sama
+const fullLoadPromises={}; let fullLoading=0;
+function loadFullIndex(sumber){
+  if(loadedSumbers[sumber]) return Promise.resolve();
+  if(fullLoadPromises[sumber]) return fullLoadPromises[sumber];
+  fullLoading++;
   showStatus('Memuat index teks penuh — '+SL[sumber]+'...');
   document.getElementById('loadingBadge').classList.add('show');
-  try{
-    const res=await fetch('index_'+sumber+'.json');
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const json=await res.json();
-    fullData[sumber]=json.regulasi;
-    buildLunr(json.regulasi,sumber);
-    loadedSumbers[sumber]=true;
-  }catch(e){console.warn('Full index failed:',sumber,e);}
-  finally{
-    loadingNow=false;
-    document.getElementById('loadingBadge').classList.remove('show');
-    hideStatus(); render();
-  }
+  fullLoadPromises[sumber]=(async()=>{
+    try{
+      const res=await fetch('index_'+sumber+'.json');
+      if(!res.ok) throw new Error('HTTP '+res.status);
+      const json=await res.json();
+      fullData[sumber]=json.regulasi;
+      buildLunr(json.regulasi,sumber);
+      loadedSumbers[sumber]=true;
+    }catch(e){console.warn('Full index failed:',sumber,e);delete fullLoadPromises[sumber];}
+    finally{
+      fullLoading--;
+      if(fullLoading===0){document.getElementById('loadingBadge').classList.remove('show');hideStatus();}
+      render();
+    }
+  })();
+  return fullLoadPromises[sumber];
 }
 
 // Load index UU/PP — format array langsung (bukan {regulasi:[...]})
@@ -450,7 +456,7 @@ async function loadExtraIndex(jenis){
 
 async function ensureFullLoaded(){
   const todo=filterSumber?[filterSumber]:['perasuransian','penjaminan','dana_pensiun'];
-  for(const s of todo){if(!loadedSumbers[s]) await loadFullIndex(s);}
+  await Promise.all(todo.map(s=>loadFullIndex(s)));
   // UU dan PP sudah dimuat via loadExtraIndex, tidak perlu di-await lagi
 }
 
@@ -499,7 +505,7 @@ function getResults(){
   let results=slimData, scoreMap={};
   if(q.length>=2){
     // Deteksi khusus pattern: "POJK 26", "SEOJK 10", "PADK 39", "POJK 26/2023" dll
-    const regexPattern=/^(POJK|SEOJK|PADK)\s+(\d+)(?:\/(\d{4}))?$/i;
+    const regexPattern=/^(POJK|SEOJK|PADK|UU|PP)\s*(?:no\.?|nomor)?\s*(\d+)(?:\s*(?:\/|tahun)\s*(\d{4}))?$/i;
     const patternMatch=q.trim().match(regexPattern);
     if(patternMatch){
       const jenis=patternMatch[1].toUpperCase();
@@ -519,7 +525,21 @@ function getResults(){
       for(const s of allKeys){
         if(lunrFull[s]){(lunrSearch(lunrFull[s],q)||[]).forEach(x=>{scoreMap[x.ref]=Math.max(scoreMap[x.ref]||0,x.score);});usedFull=true;}
       }
-      if(!usedFull&&lunrSlim)(lunrSearch(lunrSlim,q)||[]).forEach(x=>scoreMap[x.ref]=x.score);
+      // Bidang yang teks penuhnya belum termuat: pakai indeks ringkas untuk bidang itu
+      const pending=subs.filter(s=>!lunrFull[s]);
+      if(pending.length&&lunrSlim)(lunrSearch(lunrSlim,q)||[]).forEach(x=>{
+        const r=slimData.find(y=>y.id===x.ref);
+        if(!usedFull||(r&&pending.includes(r.sumber))) scoreMap[x.ref]=Math.max(scoreMap[x.ref]||0,x.score);
+      });
+      // id salinan per-bidang (mis. penjaminan-pojk-19-2026) → id utama di daftar
+      const slimIds=new Set(slimData.map(r=>r.id));
+      const mainOf={}; slimData.forEach(r=>{mainOf[r.jenis+'|'+r.nomor+'|'+r.tahun]=r.id;});
+      Object.keys(scoreMap).forEach(id=>{
+        if(slimIds.has(id)) return;
+        const src=Object.values(fullData).flat().find(r=>r.id===id);
+        const main=src&&mainOf[src.jenis+'|'+src.nomor+'|'+src.tahun];
+        if(main&&scoreMap[main]===undefined) scoreMap[main]=scoreMap[id];
+      });
       if(Object.keys(scoreMap).length>0) results=results.filter(r=>scoreMap[r.id]!==undefined);
       else results=[];
       // Phrase filter
@@ -536,7 +556,7 @@ function getResults(){
       }
     }
   }
-  if(filterSumber) results=results.filter(r=>r.sumber===filterSumber);
+  if(filterSumber) results=results.filter(r=>r.sumber===filterSumber||(r.juga_berlaku_di||[]).includes(SL[filterSumber]));
   if(filterJenis)  results=results.filter(r=>r.jenis===filterJenis);
   if(filterTahun)  results=results.filter(r=>String(Number(r.tahun))===String(Number(filterTahun)));
   if(sortMode==='relevansi'&&q.length>=2){
