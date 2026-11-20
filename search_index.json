@@ -1,6 +1,6 @@
 {
   "meta": {
-    "total": 103,
+    "total": 104,
     "sumber": [
       "Perasuransian",
       "Penjaminan",
@@ -11,11 +11,11 @@
   },
   "stats": {
     "global": {
-      "total_regulasi": 103,
-      "total_pasal": 5405,
-      "total_halaman": 8367,
+      "total_regulasi": 104,
+      "total_pasal": 5519,
+      "total_halaman": 8402,
       "per_jenis": {
-        "POJK": 61,
+        "POJK": 62,
         "SEOJK": 38,
         "PADK": 4
       },
@@ -23,17 +23,17 @@
         "dari": 2013,
         "sampai": 2026
       },
-      "total_regulasi_unik": 103,
-      "lintas_sektor": 38
+      "total_regulasi_unik": 104,
+      "lintas_sektor": 39
     },
     "per_bidang": {
       "perasuransian": {
         "label": "Perasuransian",
-        "total_regulasi": 82,
-        "total_pasal": 4099,
-        "total_halaman": 5480,
+        "total_regulasi": 83,
+        "total_pasal": 4213,
+        "total_halaman": 5515,
         "per_jenis": {
-          "POJK": 50,
+          "POJK": 51,
           "SEOJK": 30,
           "PADK": 2
         },
@@ -44,11 +44,11 @@
       },
       "penjaminan": {
         "label": "Penjaminan",
-        "total_regulasi": 45,
-        "total_pasal": 1945,
-        "total_halaman": 3416,
+        "total_regulasi": 46,
+        "total_pasal": 2059,
+        "total_halaman": 3451,
         "per_jenis": {
-          "POJK": 31,
+          "POJK": 32,
           "SEOJK": 12,
           "PADK": 2
         },
@@ -59,11 +59,11 @@
       },
       "dana_pensiun": {
         "label": "Dana Pensiun",
-        "total_regulasi": 43,
-        "total_pasal": 2493,
-        "total_halaman": 2788,
+        "total_regulasi": 44,
+        "total_pasal": 2607,
+        "total_halaman": 2823,
         "per_jenis": {
-          "POJK": 30,
+          "POJK": 31,
           "SEOJK": 13,
           "PADK": 0
         },
@@ -1903,6 +1903,22 @@
       "pdf_file": "seojk-28-2020.pdf",
       "pdf_url": "https://drive.google.com/file/d/12brV4-Yuf9Yv4z_llAoL6SvO8aj6tbBe/view",
       "snippet": "Yth.\nPengurus dan Pelaksana Tugas Pengurus Dana Pensiun\ndi tempat.\nSALINAN\nSURAT EDARAN OTORITAS JASA KEUANGAN\nREPUBLIK INDONESIA\nNOMOR 28 /SEOJK.05/2020\nTENTANG\nPENERAPAN MANAJEMEN RISIKO BAGI DANA PENSIUN\nSehubungan dengan amanat ketentuan Pasal 25 Peraturan Otoritas Jasa\nKeuangan Nomor 44/POJK.05/2020 tentang Penerapan Manajemen Risiko bagi\nLembaga Jasa Keuangan Nonbank (Lembaran Negara Republik Indonesia Tahun\n2020 Nomor 200, Tambahan Lembaran Negara Republik Indonesia Nomor 6552),\nperlu unt"
+    },
+    {
+      "id": "perasuransian-pojk-1-2013",
+      "jenis": "POJK",
+      "nomor": "1",
+      "tahun": 2013,
+      "judul": "Perlindungan Konsumen Sektor Jasa Keuangan",
+      "sumber": "perasuransian",
+      "label_sumber": "Perasuransian",
+      "halaman_awal": 5431,
+      "halaman_akhir": 5465,
+      "jumlah_pasal": 114,
+      "jumlah_halaman": 35,
+      "pdf_file": "pojk-1-2013.pdf",
+      "pdf_url": "https://drive.google.com/file/d/1kL23a_pHbepdLI_fQbagZRSXVkD4Bx56/view",
+      "snippet": "OTORITAS JASA KEUANGAN\nREPUBLIK INDONESIA\nSALINAN\nPERATURAN OTORITAS JASA KEUANGAN\nNOMOR: 1/POJK.07/2013\nTENTANG\nPERLINDUNGAN KONSUMEN SEKTOR JASA KEUANGAN\nDENGAN RAHMAT TUHAN YANG MAHA ESA\nDEWAN KOMISIONER OTORITAS JASA KEUANGAN,\nMenimbang : bahwa untuk melaksanakan ketentuan Pasal 31 Undang-Undang\nNomor 21 Tahun 2011 tentang Otoritas Jasa Keuangan, perlu\nmenetapkan Peraturan Otoritas Jasa Keuangan tentang Perlindungan\nKonsumen Sektor Jasa Keuangan;\nMengingat : Undang-Undang Nomor 21 Tahun 2011..."
     }
   ]
 }
